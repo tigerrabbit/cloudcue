@@ -63,6 +63,7 @@ def stage(platform, prebuild=False):
     require(re.fullmatch(r'\d+\.\d+\.\d+', version), 'Use an explicit numeric package version.')
     require(config['build']['frontendDist'] == '../ui', 'Unexpected frontend source.')
     require(config['identifier'] == 'io.github.tigerrabbit.cloudcue', 'Unexpected app identity.')
+    require(config['productName'] == 'CloudCue', 'Unexpected product name.')
     require({p.name for p in (ROOT / 'ui').iterdir()} == UI_FILES, 'Unexpected bundled UI files.')
     secret = re.compile(rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[opus]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|xox[baprs]-[A-Za-z0-9-]{25,}')
     private = re.compile(rb'(?i)(/Users/(?!runner/)[^\s/]+/|obsidian://|gdwobsidian|creditcleanup|echo\.exam-prep\.v1)')
@@ -119,8 +120,10 @@ def stage(platform, prebuild=False):
         if kind == 'dmg':
             command('hdiutil', 'verify', str(source))
         elif kind == 'deb':
-            for field, expected in {'Package': 'cloudcue', 'Version': version, 'Architecture': 'amd64'}.items():
+            # Tauri's Debian bundler converts the product name to kebab case.
+            for field, expected in {'Package': 'cloud-cue', 'Version': version, 'Architecture': 'amd64'}.items():
                 require(command('dpkg-deb', '-f', str(source), field) == expected, 'Debian metadata mismatch.')
+            metadata['debianPackage'] = {'name': 'cloud-cue', 'depends': command('dpkg-deb', '-f', str(source), 'Depends')}
         elif kind == 'nsis':
             require(command('powershell', '-NoProfile', '-Command',
                             f"(Get-AuthenticodeSignature -LiteralPath {powershell_path(source)}).Status") == 'NotSigned',
