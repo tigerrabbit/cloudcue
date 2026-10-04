@@ -52,8 +52,23 @@ def authenticode_status(path):
                    "$cloudcue_signature.Status.ToString(); exit 0")
 
 
+def packaged_binary_sha256(kind, binary):
+    if kind == 'dmg':
+        return sha256(binary)
+    # Tauri CLI 2.12.0 patches the first marker before packaging, then restores
+    # the standalone binary. Reproduce only that exact normal transformation:
+    # https://github.com/tauri-apps/tauri/blob/tauri-cli-v2.12.0/crates/tauri-bundler/src/bundle.rs
+    original = b'__TAURI_BUNDLE_TYPE_VAR_UNK'
+    replacement = {'deb': b'__TAURI_BUNDLE_TYPE_VAR_DEB',
+                   'nsis': b'__TAURI_BUNDLE_TYPE_VAR_NSS'}[kind]
+    data = binary.read_bytes()
+    require(original in data and len(original) == len(replacement),
+            'Expected the standalone Tauri bundle marker.')
+    return hashlib.sha256(data.replace(original, replacement, 1)).hexdigest()
+
+
 def inspect_payload(kind, package, binary, notices):
-    expected = {'cloudcue': sha256(binary), 'DISTRIBUTION-NOTICES.txt': sha256(notices)}
+    expected = {'cloudcue': packaged_binary_sha256(kind, binary), 'DISTRIBUTION-NOTICES.txt': sha256(notices)}
     if kind == 'dmg':
         result = subprocess.check_output(['hdiutil', 'attach', '-readonly', '-nobrowse', '-plist', str(package)])
         mounts = [entry['mount-point'] for entry in plistlib.loads(result)['system-entities'] if 'mount-point' in entry]
@@ -75,13 +90,14 @@ def inspect_payload(kind, package, binary, notices):
                 members = [entry for entry in archive.getmembers() if ('/' + entry.name.lstrip('./')).endswith(suffix)]
                 require(len(members) == 1 and members[0].isfile(), 'Expected one ordinary Debian payload file.')
                 require(hashlib.sha256(archive.extractfile(members[0]).read()).hexdigest() == wanted,
-                        'Debian payload mismatch.')
+                        f'Debian payload mismatch: {suffix}.')
     elif kind == 'nsis':
         tool = shutil.which('7z') or 'C:/Program Files/7-Zip/7z.exe'
         for name, wanted in {'cloudcue.exe': expected['cloudcue'],
                              'DISTRIBUTION-NOTICES.txt': expected['DISTRIBUTION-NOTICES.txt']}.items():
             data = subprocess.check_output([tool, 'x', '-so', '-bd', '-r', str(package), name], stderr=subprocess.PIPE)
             require(hashlib.sha256(data).hexdigest() == wanted, 'Windows installer payload mismatch.')
+    return expected['cloudcue']
 
 
 def stage(platform, prebuild=False):
@@ -176,7 +192,7 @@ def stage(platform, prebuild=False):
         elif kind == 'nsis':
             require(authenticode_status(source) == 'NotSigned',
                     'Expected unsigned preview installer.')
-        inspect_payload(kind, source, binary, notices)
+        metadata['bundledExecutableSha256'] = inspect_payload(kind, source, binary, notices)
         destination = output / f'CloudCue_{version}_{suffix}'
         shutil.copyfile(source, destination)
         metadata['files'].append({'name': destination.name, 'bytes': destination.stat().st_size,
