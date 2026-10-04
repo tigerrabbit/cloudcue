@@ -45,7 +45,7 @@ The bank is a **foundation baseline**, informed by the CCSP outline effective Au
 
 The questions and explanations were authored with Codex assistance, not copied from an official exam or purchased question bank. Their primary-source references are kept alongside the bank. See [content provenance](CONTENT_PROVENANCE.md) for scope and limitations. Source websites remain under their own terms; no reference PDFs, course material, or official exam questions are bundled.
 
-Curated submissions require original work or documented redistribution authorization, an answer rationale, a public concept source, and human maintainer review. Real, recalled, leaked, or confidential exam questions are prohibited. Reported or identified policy violations are removed from the shared bank and its generated copy. See [contributing](CONTRIBUTING.md#curated-question-submissions) before proposing content.
+Curated submissions require original work or documented redistribution authorization, an answer rationale, a public concept source, and human maintainer review. Real, recalled, leaked, or confidential exam questions are prohibited. Reported or identified policy violations are removed from the shared bank and its generated copy. See [contributing](CONTRIBUTING.md#questions-and-rights) before proposing content.
 
 CloudCue is an independent project and is not affiliated with, endorsed by, or sponsored by ISC2. CCSP and other referenced names belong to their respective owners. The icon is an original cloud-and-check illustration, not a certification logo.
 
