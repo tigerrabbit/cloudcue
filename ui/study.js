@@ -296,10 +296,12 @@ $('#remove-bank-confirm').addEventListener('click', () => {
     $('#remove-bank-dialog').close();
     return;
   }
-  try { localStorage.removeItem(KEYS.private); } catch { storageUnavailable = true; }
+  let progressRemoved = true;
+  try { localStorage.removeItem(KEYS.private); } catch { storageUnavailable = true; progressRemoved = false; }
   privateBank = privateBanks.empty();
   switchBank('private', true);
-  $('#private-bank-status').textContent = 'Private questions and progress removed locally.';
+  $('#private-bank-status').textContent = progressRemoved ? 'Private questions and progress removed locally.'
+    : 'Private questions removed. Stored score metadata could not be removed; try resetting private progress when storage is available.';
   $('#remove-bank-dialog').close();
 });
 
