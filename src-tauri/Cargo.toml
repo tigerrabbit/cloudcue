@@ -2,6 +2,7 @@
 name = "cloudcue"
 license = "MIT"
 description = "Offline CCSP foundation practice"
+authors = ["Gregory Wendel"]
 version = "0.1.0"
 edition = "2021"
 

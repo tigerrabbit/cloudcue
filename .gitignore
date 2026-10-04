@@ -6,6 +6,7 @@ src-tauri/icons/*
 !src-tauri/icons/icon.icns
 !src-tauri/icons/icon.ico
 .local/
+release-assets/
 .DS_Store
 .env
 .env.*

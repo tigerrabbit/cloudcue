@@ -6,6 +6,10 @@ CloudCue includes **60 AI-assisted, original practice questions**, with ten in e
 
 Choose the **Curated** bank for the included questions or import a **Private** JSON bank for local study. The two banks have separate questions, saved sessions, and scores. Private imports do not submit content to the shared bank.
 
+## Download
+
+Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: Windows packages are unsigned, Linux retains a documented dependency advisory, and macOS downloads are held in draft pending a signing decision. Read each release's build and installation status before downloading.
+
 ## Start studying
 
 1. Choose a topic, session length, and mode.
@@ -92,7 +96,9 @@ Help by reviewing question accuracy and explanations, testing keyboard and scree
 - `scripts/build-bank.py`: deterministic bank generator using Python 3; generated `ui/questions.js` is committed.
 - `tests/`: bank integrity, scoring, filtering, and saved-session regression checks.
 - `src-tauri/`: Tauri 2 native shell with no custom native commands or plugins.
-- `scripts/tauri.sh`: launcher using Rust on your PATH, with an optional ignored `.local/toolchain` fallback.
+- `scripts/tauri.sh`: POSIX launcher preferring an existing ignored `.local/toolchain` installation, otherwise using Rust on your PATH.
+- `.github/workflows/build-release.yml`: manually triggered preview-package builds from `main`; it stages checked packages and metadata without publishing a release.
+- `scripts/stage-release.py`: package architecture, identity, signing-status, bundled-file, and checksum checks for clean CI builds.
 
 To edit the question bank, update `data/ccsp.psv` and, when needed, `data/sources.json`, run `python3 scripts/build-bank.py`, then run the tests and syntax checks. Each row has eight pipe-separated fields: topic, source key, prompt, correct answer, three distractors, and explanation.
 
