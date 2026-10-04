@@ -1,0 +1,2 @@
+# Preserve the byte-identical upstream files referenced by pinned SHA-256 values.
+third-party/rust-license-fallbacks/** -text
