@@ -97,7 +97,7 @@ test('corrupt storage and invalid saved questions recover without crashing', () 
 });
 
 test('generated bank matches the authoring rows and retains only used references', () => {
-  const rows = fs.readFileSync(path.join(__dirname, '../data/ccsp.psv'), 'utf8').trim().split('\n');
+  const rows = fs.readFileSync(path.join(__dirname, '../data/ccsp.psv'), 'utf8').trim().split(/\r?\n/);
   const sources = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/sources.json'), 'utf8'));
   assert.equal(rows.length, bank.questions.length);
   for (const [index, row] of rows.entries()) {
