@@ -42,6 +42,14 @@ def powershell_path(path):
     return "'" + str(path).replace("'", "''") + "'"
 
 
+def authenticode_status(path):
+    # Use the same PowerShell 7 runtime as the Windows workflow, with no profile.
+    return command('pwsh', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command',
+                   "$ErrorActionPreference = 'Stop'; "
+                   f"$cloudcue_signature = Get-AuthenticodeSignature -LiteralPath {powershell_path(path)}; "
+                   "$cloudcue_signature.Status.ToString(); exit 0")
+
+
 def stage(platform, prebuild=False):
     target, formats = PLATFORMS[platform]
     require(os.environ.get('GITHUB_ACTIONS') == 'true', 'Staging is restricted to GitHub Actions.')
@@ -96,8 +104,7 @@ def stage(platform, prebuild=False):
         require(offset + 6 <= len(data) and data[offset:offset + 4] == b'PE\0\0'
                 and struct.unpack_from('<H', data, offset + 4)[0] == 0x8664,
                 'Unexpected Windows binary architecture.')
-        signature = command('powershell', '-NoProfile', '-Command',
-                            f"(Get-AuthenticodeSignature -LiteralPath {powershell_path(binary)}).Status")
+        signature = authenticode_status(binary)
         require(signature == 'NotSigned', 'Expected unsigned preview executable.')
         metadata['signature'] = 'unsigned; no Authenticode certificate'
     else:
@@ -125,8 +132,7 @@ def stage(platform, prebuild=False):
                 require(command('dpkg-deb', '-f', str(source), field) == expected, 'Debian metadata mismatch.')
             metadata['debianPackage'] = {'name': 'cloud-cue', 'depends': command('dpkg-deb', '-f', str(source), 'Depends')}
         elif kind == 'nsis':
-            require(command('powershell', '-NoProfile', '-Command',
-                            f"(Get-AuthenticodeSignature -LiteralPath {powershell_path(source)}).Status") == 'NotSigned',
+            require(authenticode_status(source) == 'NotSigned',
                     'Expected unsigned preview installer.')
         destination = output / f'CloudCue_{version}_{suffix}'
         shutil.copyfile(source, destination)
