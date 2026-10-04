@@ -96,6 +96,10 @@ Help by reviewing question accuracy and explanations, testing keyboard and scree
 
 To edit the question bank, update `data/ccsp.psv` and, when needed, `data/sources.json`, run `python3 scripts/build-bank.py`, then run the tests and syntax checks. Each row has eight pipe-separated fields: topic, source key, prompt, correct answer, three distractors, and explanation.
 
+## Credits
+
+Built with Rust and Tauri, with development assistance from OpenAI Codex and ChatGPT, and security analysis assisted by Grok 4.7. The frontend uses plain HTML, CSS, and JavaScript.
+
 ## License and contributions
 
 Project-authored code, questions, explanations, and icon are offered under the [MIT license](LICENSE), copyright Gregory Wendel, 2026. Authorized third-party additions must preserve their applicable license, attribution, and notices. Dependency and reference-content rights remain separate; see [third-party notices](THIRD_PARTY_NOTICES.md). AI-assisted authorship and citations do not guarantee clearance of every possible third-party claim.
