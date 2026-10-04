@@ -10,6 +10,8 @@ Before a native build, `scripts/generate-distribution-notices.py --target <targe
 
 Preview packages contain this resource and provide a separate per-platform notice file. The packaging workflow verifies the installed payload's executable and notice hashes. On macOS the resource is inside `CloudCue.app/Contents/Resources`; Windows and DEB packages install it alongside their application resources. These notices do not replace upstream terms or claim a completed legal-clearance audit. The macOS Objective-C binding upstream policy, including its Apple SDK discussion, is preserved without inventing attribution or resolving that policy's uncertainty.
 
+The Windows MSVC build links Microsoft's WebView2 SDK loader from `webview2-com-sys`. Its SDK `LICENSE.txt` and `NOTICE.txt` are included separately from the Rust wrapper's MIT license, with the exact SDK package and matching loader hashes pinned. This loader is distinct from the WebView2 Runtime installed on the host or downloaded by the installer.
+
 DEB packages rely on host-provided GTK/WebKitGTK libraries. AppImage distribution is withheld because it additionally bundles native libraries whose complete notices and corresponding-source route have not been established. Do not redistribute those AppImages from earlier development builds. New or changed dependencies and distribution formats require another notice review.
 
 External reference pages are linked, not bundled or relicensed. ISC2, NIST, OWASP, Microsoft, AWS, Cloud Security Alliance, and European Commission references remain subject to their respective terms. Referenced product and certification names are used for identification, with no claimed endorsement.

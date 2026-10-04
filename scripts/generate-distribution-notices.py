@@ -42,9 +42,9 @@ def read_text(path, label):
 
 def run(command, label):
     try:
-        result = subprocess.run(command, cwd=ROOT, check=True, text=True,
+        result = subprocess.run(command, cwd=ROOT, check=True, text=True, encoding="utf-8",
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except (OSError, subprocess.CalledProcessError) as exc:
+    except (OSError, UnicodeError, subprocess.CalledProcessError) as exc:
         # Cargo/rustc errors can contain local usernames and checkout paths.
         raise NoticeError(f"{label} failed; run the command locally to inspect its diagnostics") from exc
     return result.stdout
@@ -58,7 +58,11 @@ def public_url(value, label):
 
 
 def parse_expression(expression):
-    """Parse AND/OR/parentheses; Cargo's historic slash form means OR."""
+    """Parse the expected SPDX operators and Apache's LLVM exception.
+
+    Cargo's historic slash form means OR. WITH requires the full base terms
+    plus the full specific exception; the exception never substitutes for them.
+    """
     normalized = expression.replace("/", " OR ")
     tokens = re.findall(r"\(|\)|[A-Za-z0-9.+-]+", normalized)
     if re.sub(r"\s+", "", normalized) != "".join(tokens):
@@ -79,6 +83,15 @@ def parse_expression(expression):
             return node
         if token not in SUPPORTED:
             raise NoticeError(f"Unsupported license identifier: {token}")
+        if at < len(tokens) and tokens[at] == "WITH":
+            at += 1
+            if at >= len(tokens):
+                raise NoticeError(f"Incomplete license exception: {expression}")
+            exception = tokens[at]
+            at += 1
+            if token != "Apache-2.0" or exception != "LLVM-exception":
+                raise NoticeError(f"Unsupported license exception: {token} WITH {exception}")
+            return ("AND", token, exception)
         return token
 
     def both():
@@ -119,6 +132,10 @@ def has_terms(text):
         found.add("MIT-0")
     if "apache license" in t and "version 2.0" in t and "end of terms and conditions" in t:
         found.add("Apache-2.0")
+    if ("llvm exceptions to the apache 2.0 license" in t and
+            "without complying with the conditions of sections 4(a), 4(b) and 4(d)" in t and
+            "only in their entirety and only with respect to the combined software" in t):
+        found.add("LLVM-exception")
     if ("redistribution and use in source and binary forms" in t and
             "redistributions in binary form" in t and "however caused" in t):
         found.add("BSD-3-Clause" if "neither the name" in t else "BSD-2-Clause")
@@ -266,6 +283,54 @@ def package_notices(package, fallback_base, fallbacks):
     terms = set().union(*(has_terms(t[1]) for t in texts)) if texts else set()
     if not covered(parse_expression(expression), terms):
         raise NoticeError(f"Missing full upstream license terms for {label}: {expression}")
+    # Native SDK components have their own rights and notices. They cannot
+    # satisfy or replace the Rust crate's SPDX license coverage checked above.
+    native_components = (entry or {}).get("native_components", [])
+    if name == "webview2-com-sys":
+        loader_paths = {p.relative_to(source_root).as_posix()
+                        for p in source_root.rglob("WebView2LoaderStatic.lib") if p.is_file()}
+        if loader_paths:
+            sdk_components = [c for c in native_components if c.get("name") == "Microsoft WebView2 SDK loader"]
+            if len(sdk_components) != 1:
+                raise NoticeError(f"Missing explicit native WebView2 SDK supplement for {label}")
+            if loader_paths != {a["file"] for a in sdk_components[0].get("artifacts", [])}:
+                raise NoticeError(f"Native WebView2 SDK loader inventory changed for {label}")
+    for component in native_components:
+        component_label = f"{component['name']} {component['version']}"
+        package_url = public_url(component["sdk_package_url"], component_label)
+        package_sha = component["sdk_package_sha256"]
+        if not re.fullmatch(r"[0-9a-f]{64}", package_sha):
+            raise NoticeError(f"Missing native SDK package checksum for {label}")
+        if not component.get("artifacts") or {t.get("role") for t in component.get("texts", [])} != {"license", "notice"}:
+            raise NoticeError(f"Missing native SDK artifact, license, or notice inputs for {label}")
+        provenance = [f"Native SDK component: {component_label}",
+                      f"Native SDK scope: {component['scope']}",
+                      f"Native SDK package: {package_url}",
+                      f"Native SDK package SHA-256: {package_sha}"]
+        for artifact in component["artifacts"]:
+            path = source_root / artifact["file"]
+            if not path.resolve().is_relative_to(source_root):
+                raise NoticeError(f"Native SDK artifact escapes registry source for {label}")
+            try:
+                checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+            except OSError as exc:
+                raise NoticeError(f"Missing native SDK artifact for {label}") from exc
+            if checksum != artifact["sha256"]:
+                raise NoticeError(f"Native SDK artifact checksum mismatch for {label}")
+            provenance.append(f"Native SDK artifact: {artifact['file']} (SHA-256 {checksum})")
+        note = (note + "\n" if note else "") + "\n".join(provenance)
+        for item in component["texts"]:
+            path = fallback_base / item["file"]
+            if not path.resolve().is_relative_to(fallback_base.resolve()):
+                raise NoticeError(f"Native SDK notice escapes its directory for {label}")
+            try:
+                checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+            except OSError as exc:
+                raise NoticeError(f"Missing native SDK {item['role']} text for {label}") from exc
+            if checksum != item["sha256"]:
+                raise NoticeError(f"Native SDK {item['role']} checksum mismatch for {label}")
+            url = public_url(item["source_url"], component_label)
+            texts.append((f"{component_label}: {item['role']} text", read_text(path, component_label), url))
     return texts, note
 
 
@@ -370,7 +435,7 @@ def generate(args):
              "conservatively inclusive of build dependencies; listing a package does",
              "not assert that all its code is present in this executable. Rust's",
              "standard-library distribution notices are included separately below.",
-             "Platform libraries and operating-system components are outside this Cargo",
+             "Host operating-system libraries and components are outside this Cargo",
              "inventory. This file is not a claim of a completed legal-clearance audit.", "",
              "Registry packages are used unmodified. For each package, the source",
              "archive URL below retrieves the exact original source, including covered",
