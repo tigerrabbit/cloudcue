@@ -28,7 +28,7 @@ function element(tag, text, className) {
   return node;
 }
 function save() {
-  try { localStorage.setItem(KEYS[bankKind], JSON.stringify({ version: core.VERSION, bankVersion: bank.version, progress, session })); }
+  try { localStorage.setItem(KEYS[bankKind], JSON.stringify({ version: core.VERSION, bankVersion: bank.version, progress, session })); storageUnavailable = false; }
   catch { storageUnavailable = true; }
   $('#storage-note').hidden = !storageUnavailable;
 }
