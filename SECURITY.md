@@ -6,7 +6,7 @@ Security fixes target the latest source on the default branch. CloudCue is a loc
 
 ## Reporting
 
-Use the repository's private GitHub vulnerability-reporting flow when available. If it is unavailable, open a minimal issue requesting a private reporting channel, without publishing credentials, personal data, exploit details, or a sensitive proof of concept. This policy does not promise a response deadline.
+Use [GitHub private vulnerability reporting](https://github.com/tigerrabbit/cloudcue/security/advisories/new) when enabled for the public repository. If that route is unavailable, [open a minimal issue](https://github.com/tigerrabbit/cloudcue/issues/new) requesting maintainer follow-up without publishing credentials, personal data, exploit details, or a sensitive proof of concept. This policy does not promise a response deadline.
 
 Include the affected commit, platform, reproduction steps, expected security boundary, impact, and any safe supporting evidence. Do not send secret values or personal study records.
 

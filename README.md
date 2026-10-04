@@ -66,6 +66,24 @@ npm run build
 
 The build produces `src-tauri/target/release/bundle/macos/CloudCue.app`. It is a local, unsigned development build; this repository does not publish signed installers. Dependencies are recorded in both lockfiles.
 
+### Desktop platform routes
+
+Run `npm ci`, `npm test`, and `npm run check` on each development machine. Install the official [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/) before native commands. `npm run dev` and `npm run build` use a POSIX launcher and currently target a macOS app; use the direct CLI routes below on other operating systems.
+
+| Platform | Prerequisites and build route | Verification |
+| --- | --- | --- |
+| macOS | Xcode command-line tools (`xcode-select --install`), Node 22+, stable Rust with rustfmt/Clippy. `npm run dev`; `npm run build`. | Apple Silicon native build and manual app checks passed; macOS CI builds the app. |
+| Windows | Microsoft C++ Build Tools with **Desktop development with C++**, WebView2, and an MSVC Rust toolchain. `npx tauri dev`; `npx tauri build --bundles nsis`. MSI builds also need the Windows VBSCRIPT feature. | Intended contributor route; no Windows build or native test has been run. |
+| Debian/Ubuntu Linux | Tauri's WebKitGTK 4.1 development packages and compiler prerequisites. `npx tauri dev`; `npx tauri build --bundles deb,appimage`. | Intended contributor route; no Linux build or native test has been run. Read the [known dependency advisory](SECURITY.md#known-dependency-advisory) first. |
+
+For Debian/Ubuntu, the current prerequisite list is `libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev`. Other distributions use different package names. These routes do not provide signing, notarization, or verified installers. iOS and Android are future exploration, with no supported mobile build today.
+
+### Checks and ways to help
+
+The repository has 21 automated Node tests and native compilation checks. [Testing notes](TESTING.md) distinguish those checks from browser E2E flows and manual macOS app checks. Ubuntu CI runs JavaScript tests and bank regeneration; it does not build the Linux desktop app.
+
+Help by reviewing question accuracy and explanations, testing keyboard and screen-reader access, or validating a desktop platform. [Open a focused issue](https://github.com/tigerrabbit/cloudcue/issues/new), [propose a legitimate question](https://github.com/tigerrabbit/cloudcue/issues/new?template=question-submission.yml), or follow [CONTRIBUTING.md](CONTRIBUTING.md) for a small pull request. Community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
+
 ## Project layout
 
 - `ui/`: static HTML, CSS, question bank, and study engine; no frontend framework or bundler.

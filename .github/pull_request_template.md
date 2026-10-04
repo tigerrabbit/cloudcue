@@ -1,26 +1,28 @@
-## Change and validation
+## Change
 
-Describe the problem, resulting behavior, and checks performed. State any checks that could not run.
+Describe the problem and resulting behavior. Link the relevant issue, if any.
 
-## Curated question provenance
+## Evidence
 
-For question changes, provide the details below. For other changes, mark this section as not applicable. Never include private banks or exports, personal study records, or restricted exam content.
+- Tested OS and architecture:
+- Relevant checks, results, and anything not verified:
+- Screenshots for UI changes, using synthetic data (or not applicable):
+- Substantial AI assistance and how the output was reviewed (or none):
 
-- Question IDs and topics:
-- Authorship and any AI assistance:
-- Original-work MIT authority, or third-party owner, license/permission, redistribution evidence, and required notices:
-- Public concept sources and relevant sections:
-- Correct-answer rationale, distractor rationale, and assumptions:
-- Authoring rows, generated bank, and reference metadata updated:
+## Question provenance
 
-Public access, purchase, a citation, and AI assistance do not establish redistribution rights. External material retains its applicable terms. CloudCue is independent and is not affiliated with, endorsed by, or sponsored by ISC2.
+For question changes, supply the following; otherwise mark this section not applicable.
 
-## Contribution checks
+- Question IDs/topics, correct-answer and distractor rationale:
+- Authoritative public concept sources and relevant sections:
+- Authorship, authority to contribute original material under MIT, or third-party license/permission and redistribution evidence:
+- Required attribution/notices and updated authoring/generated files:
 
-- [ ] I have excluded private banks or exports, personal study records, credentials, and unrelated local artifacts.
-- [ ] I have run the relevant checks in CONTRIBUTING.md and documented limitations above.
-- [ ] For question changes, the material is original with authority to contribute under MIT or has documented redistribution authorization and preserved license/attribution requirements.
-- [ ] For question changes, I have supplied a public concept source, a correct-answer rationale, and suitable distractors.
-- [ ] For question changes, the submission contains no real, recalled, leaked, or confidential exam questions, reconstructed exam items, or exam dumps.
+## Contributor checks
 
-Human maintainer review of rights, provenance, accuracy, rationale, attribution, duplicates, and study scope is required before curated inclusion. Automated checks do not establish acceptance or rights clearance. Reported or identified policy violations are removed from the shared bank and its generated copy. Report concerns using the question ID and supporting reason or public evidence without reproducing restricted content.
+- [ ] I reviewed the [contribution guide](https://github.com/tigerrabbit/cloudcue/blob/main/CONTRIBUTING.md) and remain responsible for accuracy, rights, security, and these changes, including AI-assisted work.
+- [ ] I excluded credentials, personal records, private banks or exports, and unrelated local artifacts.
+- [ ] For question changes, I supplied original or redistribution-authorized material with its rationale, sources, and required notices.
+- [ ] For question changes, I excluded real/live, recalled/reconstructed, leaked, or confidential exam questions, exam dumps, and copied commercial question-bank or course material.
+
+Curated questions require human maintainer review. Reported or identified violations are removed from the shared bank and generated copy. CloudCue is independent and is not affiliated with, endorsed by, or sponsored by ISC2.
