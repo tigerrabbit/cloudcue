@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudCue · CCSP practice</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="questions.js" defer></script>
+    <script src="study-core.js" defer></script>
+    <script src="private-bank.js" defer></script>
+    <script src="study.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header class="app-header">
+        <div><p class="brand">CloudCue</p><p class="hint">Cloud security. One question at a time.</p></div>
+      </header>
+      <div id="exam-panel">
+        <p id="storage-note" class="notice" role="status" hidden>Local storage is unavailable. This session works, but progress may not survive closing the app.</p>
+        <p id="recovery-note" class="notice" role="status" hidden>An unreadable saved session was ignored. Valid saved progress was kept where possible.</p>
+        <div id="study-home">
+          <p class="eyebrow">ONE QUESTION AT A TIME</p>
+          <h1>Prepare with purpose.</h1>
+          <p class="intro">Practice the concepts, understand your mistakes, and build confidence.</p>
+          <aside class="content-policy" aria-label="Question sharing policy">
+            <strong>Keep practice questions legitimate.</strong>
+            <p>Do not share real, recalled, leaked, or confidential exam questions. Use original or redistribution-authorized practice material. Reported or identified violations will be removed from the shared bank. CloudCue is independent and is not endorsed by ISC2.</p>
+            <a href="https://github.com/tigerrabbit/cloudcue/issues/new?template=question-submission.yml" target="_blank" rel="noopener noreferrer">Propose an original question for review</a>
+          </aside>
+          <label for="bank-kind">Question bank</label>
+          <select id="bank-kind"><option value="curated">Curated · bundled public questions</option><option value="private">Private · your local questions</option></select>
+          <section id="private-bank-panel" class="private-bank-panel" hidden aria-labelledby="private-bank-title">
+            <h2 id="private-bank-title">Your private practice bank</h2>
+            <p class="hint">Questions and scores stay in this app on this device. Nothing is automatically uploaded or shared. Local storage is not encrypted; keep your backups somewhere you trust.</p>
+            <p id="private-bank-count" class="hint"></p>
+            <label for="private-bank-file">Import your own legitimate JSON practice bank</label>
+            <input id="private-bank-file" type="file" accept=".json,application/json">
+            <p class="hint">Up to 2 MiB and 500 questions. Import replaces this private bank and resets its progress. Curated questions and scores stay separate. <a href="private-bank-example.json" download>Example JSON</a></p>
+            <p id="private-bank-status" class="hint" role="status"></p>
+            <div class="question-controls"><button id="export-private-bank" type="button" class="secondary">Export private questions</button><button id="remove-private-bank" type="button" class="text-button">Remove private bank</button></div>
+          </section>
+          <p id="track-description" class="hint"></p>
+          <div class="study-stats" aria-label="Study progress">
+            <div><strong id="bank-count">60</strong><span>In the bank</span></div>
+            <div><strong id="seen-count">0</strong><span>Questions attempted</span></div>
+            <div><strong id="accuracy">—</strong><span>Latest-answer accuracy</span></div>
+            <div><strong id="missed-count">0</strong><span>To revisit</span></div>
+          </div>
+          <p class="hint">Progress updates after a completed session. Accuracy uses your latest submitted answer to each attempted question.</p>
+          <div id="resume-banner" class="resume-banner" hidden>
+            <div><strong>You have a paused session</strong><p id="resume-description" class="hint"></p></div>
+            <button id="resume-study" type="button">Resume session</button>
+          </div>
+          <section class="setup-card" aria-labelledby="setup-title">
+            <h2 id="setup-title">Make this session yours</h2>
+            <div class="setup-grid">
+              <div><label for="study-topic">Topic</label><select id="study-topic"><option value="all">All topics</option></select></div>
+              <div><label for="study-count">Questions</label><select id="study-count"><option value="10">10 questions</option><option value="20">20 questions</option><option value="40">40 questions</option><option value="all">All available</option></select></div>
+              <div><label for="study-mode">Session mode</label><select id="study-mode"><option value="practice">Practice · immediate feedback</option><option value="selftest">Self-test · answers at the end</option></select></div>
+            </div>
+            <label class="check-label"><input id="missed-only" type="checkbox"> Only previously missed questions</label>
+            <p id="available-count" class="hint" aria-live="polite"></p>
+            <button id="start-study" type="button">Start session</button>
+          </section>
+          <section aria-labelledby="recent-title">
+            <div class="section-header"><h2 id="recent-title">Recent sessions</h2><button id="last-result" class="secondary" type="button" hidden>Review last result</button></div>
+            <p id="recent-empty" class="hint">Your completed sessions will appear here.</p>
+            <ol id="recent-sessions" class="recent-sessions"></ol>
+          </section>
+          <footer class="study-footer"><p class="hint">The curated bank has 60 AI-assisted practice questions with source references. Practice scores are not official exam scores. Works offline; no account required. Source pages need a browser and internet connection.</p><button id="reset-progress" class="text-button" type="button">Reset study progress</button></footer>
+        </div>
+        <div id="study-session" hidden>
+          <div class="section-header"><p id="session-label" class="eyebrow"></p><button id="pause-study" type="button" class="secondary">Pause &amp; save</button></div>
+          <div class="section-header"><h2 id="question-position"></h2><span id="answered-label" class="hint"></span></div>
+          <progress id="session-progress" value="0" max="10" aria-label="Questions answered"></progress>
+          <form id="answer-form">
+            <p id="question-tag" class="eyebrow"></p>
+            <fieldset>
+              <legend id="question-prompt" tabindex="-1"></legend>
+              <div id="question-options"></div>
+            </fieldset>
+            <p id="selftest-note" class="hint" aria-live="polite" hidden></p>
+            <div id="answer-feedback" aria-live="polite" hidden></div>
+            <div class="question-controls"><button id="previous-question" type="button" class="secondary">Previous</button><button id="submit-answer" type="button">Submit answer</button><button id="next-question" type="button" hidden>Next question</button></div>
+          </form>
+          <div class="study-footer"><button id="finish-early" type="button" class="text-button">Finish early &amp; review</button></div>
+        </div>
+        <div id="study-results" hidden>
+          <p class="eyebrow">KEEP THE INSIGHT. TRY AGAIN.</p>
+          <h1 id="results-title" tabindex="-1">Session complete</h1>
+          <div class="score-card"><strong id="result-score"></strong><span id="result-percent"></span></div>
+          <p id="result-detail" class="hint"></p>
+          <p class="hint">This is feedback on your selected practice bank, not a predicted official pass or scaled exam score.</p>
+          <div class="question-controls"><button id="retry-missed" type="button">Retry missed questions</button><button id="back-to-setup" type="button" class="secondary">New session</button></div>
+          <section aria-labelledby="review-title"><div class="section-header"><h2 id="review-title">Answer review</h2><label class="check-label"><input id="review-missed-only" type="checkbox"> Show only missed</label></div><div id="review-list"></div></section>
+        </div>
+      </div>
+    </main>
+    <dialog id="finish-dialog"><h2>Finish this session?</h2><p id="finish-description"></p><div class="question-controls"><button id="finish-cancel" type="button" class="secondary">Keep studying</button><button id="finish-confirm" type="button">Finish &amp; review</button></div></dialog>
+    <dialog id="replace-dialog"><h2>Start a new session?</h2><p>This replaces your paused session. Completed-session progress will be kept.</p><div class="question-controls"><button id="replace-cancel" type="button" class="secondary">Keep paused session</button><button id="replace-confirm" type="button">Start new session</button></div></dialog>
+    <dialog id="reset-dialog"><h2>Reset study progress?</h2><p id="reset-description"></p><div class="question-controls"><button id="reset-cancel" type="button" class="secondary">Keep progress</button><button id="reset-confirm" type="button">Reset progress</button></div></dialog>
+    <dialog id="import-bank-dialog"><h2>Replace your private bank?</h2><p id="import-bank-description"></p><p>Your existing private questions and progress will be replaced. Curated questions and progress stay separate. No questions will be uploaded.</p><div class="question-controls"><button id="import-bank-cancel" type="button" class="secondary">Keep existing bank</button><button id="import-bank-confirm" type="button">Import locally</button></div></dialog>
+    <dialog id="export-bank-dialog"><h2>Export private questions</h2><p>This JSON contains your private question content and answers, without scores or session history. Save or share it only where you intend. Download handling varies by webview; copy the JSON if a file is not offered.</p><label for="private-bank-export">Private question JSON</label><textarea id="private-bank-export" readonly rows="8"></textarea><p id="export-bank-status" class="hint" role="status"></p><div class="question-controls"><button id="download-private-bank" type="button">Download JSON</button><button id="copy-private-bank" type="button" class="secondary">Copy JSON</button><button id="export-bank-close" type="button" class="secondary">Close</button></div></dialog>
+    <dialog id="remove-bank-dialog"><h2>Remove your private bank?</h2><p>This removes private questions and private progress from this app. Export a backup first if needed. Curated questions and scores stay separate.</p><div class="question-controls"><button id="remove-bank-cancel" type="button" class="secondary">Keep bank</button><button id="remove-bank-confirm" type="button">Remove locally</button></div></dialog>
+  </body>
+</html>

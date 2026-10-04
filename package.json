@@ -1,0 +1,16 @@
+{
+  "name": "cloudcue",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "./scripts/tauri.sh dev",
+    "build": "./scripts/tauri.sh build --bundles app",
+    "test": "node --test tests/*.test.cjs",
+    "check": "node --check ui/questions.js && node --check ui/study-core.js && node --check ui/private-bank.js && node --check ui/study.js"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  },
+  "license": "MIT",
+  "description": "Offline CCSP foundation practice with local progress."
+}

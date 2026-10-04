@@ -1,0 +1,101 @@
+name: Curated question submission
+description: Propose an original or redistribution-authorized practice question for human review.
+title: "[Question] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a foundation-practice question for CloudCue's curated shared bank. Every submission requires human maintainer review before inclusion. Read `CONTRIBUTING.md` and `CONTENT_PROVENANCE.md` in the repository.
+
+        Do not submit real, recalled, leaked, or confidential exam questions, reconstructed exam items, exam dumps, private banks or exports, or personal study records. A public citation or purchase does not grant redistribution rights. CloudCue is independent and is not affiliated with, endorsed by, or sponsored by ISC2.
+
+        To report a rights or exam-content concern instead, identify the existing question and the concern without reposting restricted or confidential text. Reported or identified policy violations are removed from the shared bank and its generated copy.
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      description: Identify the CCSP domain or foundation concept.
+    validations:
+      required: true
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Question prompt
+      description: Supply an original or redistribution-authorized practice scenario.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Four answer choices
+      description: Give four distinct choices, labeled A through D.
+      placeholder: |
+        A.
+        B.
+        C.
+        D.
+    validations:
+      required: true
+  - type: dropdown
+    id: correct
+    attributes:
+      label: Correct answer
+      options:
+        - A
+        - B
+        - C
+        - D
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Explanation and rationale
+      description: Explain why the answer is the best choice and why the distractors are less appropriate. State any assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: public_source
+    attributes:
+      label: Public concept source
+      description: Give a reliable public HTTPS source, its title, and the passage or section supporting the concept. Do not paste protected source material. A source link does not authorize copying.
+    validations:
+      required: true
+  - type: dropdown
+    id: rights_basis
+    attributes:
+      label: Rights basis
+      options:
+        - Original material I am authorized to contribute under MIT
+        - Third-party material with documented redistribution authorization
+    validations:
+      required: true
+  - type: textarea
+    id: authorship
+    attributes:
+      label: Authorship and AI assistance
+      description: Identify the author or owner, how the question was created, and any AI assistance.
+    validations:
+      required: true
+  - type: textarea
+    id: redistribution_evidence
+    attributes:
+      label: License, permission, and attribution
+      description: For original work, confirm your authority to offer it under MIT. For third-party material, give the license or permission, public redistribution evidence, and required attribution or notices. Do not post confidential permission records; identify the limitation for maintainer follow-up.
+    validations:
+      required: true
+  - type: checkboxes
+    id: contributor_declarations
+    attributes:
+      label: Contributor declarations
+      options:
+        - label: This submission contains no real, recalled, leaked, or confidential exam questions, reconstructed exam items, or exam dumps.
+          required: true
+        - label: I have authority to contribute the original material under MIT or have supplied documented redistribution authorization and required notices for third-party material.
+          required: true
+        - label: I have supplied an answer rationale and a public concept source, and have disclosed authorship and any AI assistance.
+          required: true
+        - label: I have excluded private banks or exports, personal study records, and credentials.
+          required: true
+        - label: I understand that human maintainer review is required and CloudCue is independent and unendorsed by ISC2.
+          required: true

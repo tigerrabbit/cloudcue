@@ -1,0 +1,82 @@
+{
+  "outline": {
+    "title": "ISC2: CCSP Outline effective August 1, 2026",
+    "url": "https://www.isc2.org/certifications/ccsp/ccsp-certification-exam-outline"
+  },
+  "nist_cloud": {
+    "title": "NIST SP 800-145: Cloud Definition",
+    "url": "https://csrc.nist.gov/pubs/sp/800/145/final"
+  },
+  "shared": {
+    "title": "Microsoft: Shared Responsibility",
+    "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility"
+  },
+  "aws_shared": {
+    "title": "AWS: Shared Responsibility",
+    "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+  },
+  "nist_privacy": {
+    "title": "NIST SP 800-144: Cloud Security and Privacy",
+    "url": "https://csrc.nist.gov/pubs/sp/800/144/final"
+  },
+  "crypto": {
+    "title": "OWASP: Cryptographic Storage",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html"
+  },
+  "secrets": {
+    "title": "OWASP: Secrets Management",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+  },
+  "sanitize": {
+    "title": "NIST SP 800-88 Rev. 2: Media Sanitization",
+    "url": "https://csrc.nist.gov/pubs/sp/800/88/r2/final"
+  },
+  "zero": {
+    "title": "NIST SP 800-207: Zero Trust",
+    "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+  },
+  "bcdr": {
+    "title": "NIST SP 800-34 Rev. 1: Contingency Planning",
+    "url": "https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final"
+  },
+  "authorization": {
+    "title": "OWASP: Authorization",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+  },
+  "rest": {
+    "title": "OWASP: REST Security",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html"
+  },
+  "threat": {
+    "title": "OWASP: Threat Modeling",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html"
+  },
+  "testing": {
+    "title": "OWASP: DevSecOps Guideline",
+    "url": "https://devguide.owasp.org/en/09-operations/01-devsecops/"
+  },
+  "component": {
+    "title": "OWASP: Component Analysis",
+    "url": "https://community.owasp.org/Component_Analysis"
+  },
+  "logging": {
+    "title": "OWASP: Logging",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+  },
+  "incident": {
+    "title": "NIST SP 800-61 Rev. 3: Incident Response",
+    "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+  },
+  "gdpr": {
+    "title": "European Commission: Controller and Processor Roles",
+    "url": "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/application-gdpr_en"
+  },
+  "assurance": {
+    "title": "AWS: Assurance Mechanisms",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-operational-resilience/assurance-mechanisms.html"
+  },
+  "csa": {
+    "title": "CSA: Security Guidance v5",
+    "url": "https://cloudsecurityalliance.org/research/guidance"
+  }
+}

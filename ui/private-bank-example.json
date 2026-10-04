@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "questions": [
+    {
+      "id": "private-example-001",
+      "topic": "1. Cloud Concepts, Architecture and Design",
+      "prompt": "A team can provision computing capacity through a portal without asking a provider employee to fulfil each request. Which cloud characteristic is illustrated?",
+      "options": ["On-demand self-service", "Physical media destruction", "Manual capacity reservation", "Single-tenant hosting"],
+      "correct": 0,
+      "explanation": "On-demand self-service allows a consumer to provision computing capabilities without requiring human interaction with the provider for each request.",
+      "source": {
+        "title": "NIST SP 800-145: Cloud Definition",
+        "url": "https://csrc.nist.gov/pubs/sp/800/145/final"
+      }
+    }
+  ]
+}
