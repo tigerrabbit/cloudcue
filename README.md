@@ -55,36 +55,37 @@ CloudCue is an independent project and is not affiliated with, endorsed by, or s
 
 ## Run and build
 
-The currently verified native target is macOS on Apple Silicon. Install Node.js 22 or later, a stable Rust toolchain with `rustfmt` and Clippy, and Xcode command-line tools. Tauri also has [platform-specific prerequisites](https://v2.tauri.app/start/prerequisites/). Windows and Linux builds have not been verified; the default build script produces a macOS app bundle.
+Manual native behavior has been checked on macOS Apple Silicon. Hosted CI has also compiled Windows x64 and Linux x64 packages; their installation and desktop behavior have not been manually verified. Install Node.js 22 or later, Python 3.9 or later, a stable Rust toolchain with `rustfmt` and Clippy, and your [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/). The default build script produces a macOS app bundle.
 
 ```sh
 npm ci
 npm test
 npm run check
 cargo fmt --manifest-path src-tauri/Cargo.toml --check
+python3 scripts/generate-distribution-notices.py --target aarch64-apple-darwin
 cargo test --manifest-path src-tauri/Cargo.toml --locked
 cargo clippy --manifest-path src-tauri/Cargo.toml --locked -- -D warnings
 npm run dev
 npm run build
 ```
 
-The build produces `src-tauri/target/release/bundle/macos/CloudCue.app`. It is a local, unsigned development build; this repository does not publish signed installers. Dependencies are recorded in both lockfiles.
+The build produces `src-tauri/target/release/bundle/macos/CloudCue.app`. It has no Developer ID signature or notarization. Dependencies are recorded in both lockfiles. Native commands need the generated `DISTRIBUTION-NOTICES.txt` resource; the POSIX launcher regenerates it for the host target before `dev` or `build`. See [third-party notices](THIRD_PARTY_NOTICES.md) for its scope.
 
 ### Desktop platform routes
 
-Run `npm ci`, `npm test`, and `npm run check` on each development machine. Install the official [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/) before native commands. `npm run dev` and `npm run build` use a POSIX launcher and currently target a macOS app; use the direct CLI routes below on other operating systems.
+Run `npm ci`, `npm test`, and `npm run check` on each development machine. Install the official [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/) before native commands. `npm run dev` and `npm run build` use a POSIX launcher and currently target a macOS app; use the direct CLI routes below on other operating systems. Before a direct CLI or Cargo command, run `python scripts/generate-distribution-notices.py --target <target>` using the same Rust toolchain as the build, with `x86_64-pc-windows-msvc` for Windows or `x86_64-unknown-linux-gnu` for Linux.
 
 | Platform | Prerequisites and build route | Verification |
 | --- | --- | --- |
 | macOS | Xcode command-line tools (`xcode-select --install`), Node 22+, stable Rust with rustfmt/Clippy. `npm run dev`; `npm run build`. | Apple Silicon native build and manual app checks passed; macOS CI builds the app. |
-| Windows | Microsoft C++ Build Tools with **Desktop development with C++**, WebView2, and an MSVC Rust toolchain. `npx tauri dev`; `npx tauri build --bundles nsis`. MSI builds also need the Windows VBSCRIPT feature. | Intended contributor route; no Windows build or native test has been run. |
-| Debian/Ubuntu Linux | Tauri's WebKitGTK 4.1 development packages and compiler prerequisites. `npx tauri dev`; `npx tauri build --bundles deb,appimage`. | Intended contributor route; no Linux build or native test has been run. Read the [known dependency advisory](SECURITY.md#known-dependency-advisory) first. |
+| Windows | Microsoft C++ Build Tools with **Desktop development with C++**, WebView2, and an MSVC Rust toolchain. `npx tauri dev`; `npx tauri build --bundles nsis`. | Hosted x64 compilation and unsigned NSIS package checks passed; native installation and behavior remain untested. |
+| Debian/Ubuntu Linux | Tauri's WebKitGTK 4.1 development packages and compiler prerequisites. `npx tauri dev`; `npx tauri build --bundles deb`. | Hosted Ubuntu 22.04 x64 compilation and DEB metadata checks passed; native installation and behavior remain untested. Read the [known dependency advisory](SECURITY.md#known-dependency-advisory) first. |
 
-For Debian/Ubuntu, the current prerequisite list is `libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev`. Other distributions use different package names. These routes do not provide signing, notarization, or verified installers. iOS and Android are future exploration, with no supported mobile build today.
+For Debian/Ubuntu, the current prerequisite list is `libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev`. Other distributions use different package names. These routes do not provide developer signing, notarization, or verified native installation. AppImage distribution is withheld while its additional bundled native-library obligations are resolved. iOS and Android are future exploration, with no supported mobile build today.
 
 ### Checks and ways to help
 
-The repository has 21 automated Node tests and native compilation checks. [Testing notes](TESTING.md) distinguish those checks from browser E2E flows and manual macOS app checks. Ubuntu CI runs JavaScript tests and bank regeneration; it does not build the Linux desktop app.
+The repository has 21 automated Node tests and native compilation checks. [Testing notes](TESTING.md) distinguish those checks from browser E2E flows and manual macOS app checks. Ordinary Ubuntu CI runs JavaScript tests and bank regeneration; the separate preview workflow builds desktop packages on each platform.
 
 Help by reviewing question accuracy and explanations, testing keyboard and screen-reader access, or validating a desktop platform. [Open a focused issue](https://github.com/tigerrabbit/cloudcue/issues/new), [propose a legitimate question](https://github.com/tigerrabbit/cloudcue/issues/new?template=question-submission.yml), or follow [CONTRIBUTING.md](CONTRIBUTING.md) for a small pull request. Community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
 
@@ -99,6 +100,7 @@ Help by reviewing question accuracy and explanations, testing keyboard and scree
 - `scripts/tauri.sh`: POSIX launcher preferring an existing ignored `.local/toolchain` installation, otherwise using Rust on your PATH.
 - `.github/workflows/build-release.yml`: manually triggered preview-package builds from `main`; it stages checked packages and metadata without publishing a release.
 - `scripts/stage-release.py`: package architecture, identity, signing-status, bundled-file, and checksum checks for clean CI builds.
+- `scripts/generate-distribution-notices.py`: target-specific Cargo and Rust standard-library license texts and exact source references, bundled as a build resource.
 
 To edit the question bank, update `data/ccsp.psv` and, when needed, `data/sources.json`, run `python3 scripts/build-bank.py`, then run the tests and syntax checks. Each row has eight pipe-separated fields: topic, source key, prompt, correct answer, three distractors, and explanation.
 

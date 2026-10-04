@@ -26,6 +26,9 @@
     "targets": [
       "app"
     ],
+    "resources": {
+      "../DISTRIBUTION-NOTICES.txt": "DISTRIBUTION-NOTICES.txt"
+    },
     "icon": [
       "icons/icon.png",
       "icons/icon.icns",

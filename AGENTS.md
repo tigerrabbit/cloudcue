@@ -13,6 +13,8 @@ CloudCue is a CCSP foundation-practice app using Tauri 2 with static HTML/CSS/Ja
 
 Run `npm test` and `npm run check`. Use `cargo fmt --manifest-path src-tauri/Cargo.toml --check`, `cargo test --manifest-path src-tauri/Cargo.toml --locked`, and `cargo clippy --manifest-path src-tauri/Cargo.toml --locked -- -D warnings` for Rust checks. Run `npm run build` for native or packaging changes.
 
+Before direct native/Cargo commands, generate `DISTRIBUTION-NOTICES.txt` with `python3 scripts/generate-distribution-notices.py --target <target>` using the build's active Rust toolchain. The POSIX launcher does this for its host target. Keep the generated resource out of Git; preserve pinned fallback notice provenance. Preview packages must pass payload notice/executable hash checks. AppImage distribution is withheld pending its additional native-library obligations.
+
 For UI changes verify answering, Self-test feedback timing, pause/reopen/resume, early finish, retrying misses, reset confirmation, and desktop/narrow layouts. Inspect console errors and screenshots. State checks that could not run.
 
 For private-bank changes verify the 2 MiB and 1–500 question limits, bounded plain-text fields, exactly four distinct options, correct-answer range, duplicate rejection, and credential-free HTTPS source URLs. Keep the README schema and synthetic example aligned with the importer. Verify separate curated/private scores and storage namespaces, explicit confirmation before import replacement, a separate download/copy action after the export preview, and offline behavior. For documentation and GitHub-template changes, check local links, required submission fields, and consistency with these policies.

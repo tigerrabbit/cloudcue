@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "packages": [
+    {
+      "name": "alloc-stdlib",
+      "version": "0.3.0",
+      "license": "BSD-3-Clause",
+      "revision": "0a81fd6928ea3b33c8cd484aa4575d50ffb98012",
+      "path_in_vcs": "alloc-stdlib",
+      "note": "The registry archive omits the upstream repository license file; the exact packaged revision is recorded in .cargo_vcs_info.json.",
+      "texts": [
+        {
+          "file": "alloc-stdlib-LICENSE",
+          "source_url": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE",
+          "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae"
+        }
+      ]
+    },
+    {
+      "name": "block2",
+      "version": "0.6.2",
+      "license": "MIT",
+      "revision": "b4167b582b2f75f9a1be75495c41b765344fd03c",
+      "path_in_vcs": "crates/block2",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-b4167b582b2f75f9a1be75495c41b765344fd03c-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/b4167b582b2f75f9a1be75495c41b765344fd03c/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "defmt-parser",
+      "version": "1.0.0",
+      "license": "MIT OR Apache-2.0",
+      "revision": "4a8cdb44891ed57b8ff5a023b6bec7137c48708f",
+      "path_in_vcs": "parser",
+      "note": "The registry archive omits the upstream repository license file; the exact packaged revision is recorded in .cargo_vcs_info.json.",
+      "texts": [
+        {
+          "file": "defmt-LICENSE-MIT",
+          "source_url": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-MIT",
+          "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50"
+        },
+        {
+          "file": "defmt-LICENSE-APACHE",
+          "source_url": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-APACHE",
+          "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+        }
+      ]
+    },
+    {
+      "name": "dispatch2",
+      "version": "0.3.1",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "8852b424193ca41602281b3d7540d7c8ed51e49a",
+      "path_in_vcs": "crates/dispatch2",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-8852b424193ca41602281b3d7540d7c8ed51e49a-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/8852b424193ca41602281b3d7540d7c8ed51e49a/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2",
+      "version": "0.6.4",
+      "license": "MIT",
+      "revision": "8852b424193ca41602281b3d7540d7c8ed51e49a",
+      "path_in_vcs": "crates/objc2",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-8852b424193ca41602281b3d7540d7c8ed51e49a-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/8852b424193ca41602281b3d7540d7c8ed51e49a/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-app-kit",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-app-kit",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-core-foundation",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-core-foundation",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-core-graphics",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-core-graphics",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-encode",
+      "version": "4.1.0",
+      "license": "MIT",
+      "revision": "8d214f5477365ffcbcbb7de058c86ed9a518efb7",
+      "path_in_vcs": "crates/objc2-encode",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-8d214f5477365ffcbcbb7de058c86ed9a518efb7-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/8d214f5477365ffcbcbb7de058c86ed9a518efb7/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-exception-helper",
+      "version": "0.1.1",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "8d214f5477365ffcbcbb7de058c86ed9a518efb7",
+      "path_in_vcs": "crates/objc2-exception-helper",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-8d214f5477365ffcbcbb7de058c86ed9a518efb7-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/8d214f5477365ffcbcbb7de058c86ed9a518efb7/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-foundation",
+      "version": "0.3.2",
+      "license": "MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-foundation",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-io-surface",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-io-surface",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-quartz-core",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-quartz-core",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "objc2-web-kit",
+      "version": "0.3.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "revision": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+      "path_in_vcs": "framework-crates/objc2-web-kit",
+      "note": "The exact upstream revision supplies LICENSE.md with a link to the canonical MIT terms, rather than an attributed full MIT file. Its complete policy (including the Apple SDK discussion) is retained here. The supplementary MIT terms are the immutable SPDX canonical text; their template copyright line is not a package-specific copyright claim. No upstream copyright attribution has been replaced or invented. The MIT option is used for these notices.",
+      "texts": [
+        {
+          "file": "objc2-7b1abfd750a2cacaea71d6a56ecfb83cb7de560b-LICENSE.md",
+          "source_url": "https://raw.githubusercontent.com/madsmtm/objc2/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+          "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54"
+        },
+        {
+          "file": "MIT-SPDX.txt",
+          "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/d46e94e2c78ceede1cfc63cfa0396472d2798d4c/text/MIT.txt",
+          "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5"
+        }
+      ]
+    },
+    {
+      "name": "selectors",
+      "version": "0.38.0",
+      "license": "MPL-2.0",
+      "revision": "572ecba2d1600e7c3d490586692a209faf703baa",
+      "path_in_vcs": "selectors",
+      "note": "The exact crate sources declare MPL-2.0 in their per-file headers. This is Mozilla’s full official version-2.0 text; the crate download and checksum identify the unmodified covered source.",
+      "texts": [
+        {
+          "file": "MPL-2.0.txt",
+          "source_url": "https://www.mozilla.org/media/MPL/2.0/index.txt",
+          "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04"
+        }
+      ]
+    }
+  ]
+}

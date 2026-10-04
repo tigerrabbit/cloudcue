@@ -43,6 +43,8 @@ jobs:
           rustup default stable
       - run: npm ci
       - run: cargo fmt --manifest-path src-tauri/Cargo.toml --check
+      - name: Collect native distribution notices
+        run: python3 scripts/generate-distribution-notices.py --target aarch64-apple-darwin
       - run: cargo test --manifest-path src-tauri/Cargo.toml --locked
       - run: cargo clippy --manifest-path src-tauri/Cargo.toml --locked -- -D warnings
       - run: npm run build

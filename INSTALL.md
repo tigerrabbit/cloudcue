@@ -9,9 +9,8 @@ CloudCue is an early preview. Packaging checks and native installation checks ar
 | macOS, Apple Silicon | `CloudCue_<version>_macos_arm64.dmg` | macOS distribution is held in draft pending a signing decision. An ad-hoc signature is not Apple Developer ID signing or notarization. No Intel Mac package is offered. |
 | Windows, x64 | `CloudCue_<version>_windows_x64_setup.exe` | Preview installer without an Authenticode publisher signature. Windows may display an unknown-publisher or SmartScreen warning. Native installation has not been manually verified. |
 | Ubuntu/Debian, x64 | `CloudCue_<version>_linux_amd64.deb` | Requires WebKitGTK 4.1 and package dependencies. Built on Ubuntu 22.04; compatibility with other distributions is not established. Read the [known GLib advisory](SECURITY.md#known-dependency-advisory). |
-| Linux, x64 | `CloudCue_<version>_linux_x86_64.AppImage` | Requires a compatible Linux desktop and FUSE support. Built on Ubuntu 22.04; it does not support every Linux distribution. Read the [known GLib advisory](SECURITY.md#known-dependency-advisory). |
 
-Only files actually attached to a published release are available downloads. iPhone/iPad and Android builds are not available.
+Only files actually attached to a published release are available downloads. AppImage distribution is held while its bundled native-library notices and corresponding-source route are completed. iPhone/iPad and Android builds are not available.
 
 ## Verify your download
 
@@ -30,7 +29,7 @@ sha256sum CloudCue_<version>_linux_amd64.deb
 Get-FileHash .\CloudCue_<version>_windows_x64_setup.exe -Algorithm SHA256
 ```
 
-Replace `<version>` with the release version. A matching hash verifies that the downloaded bytes match the release's checksum; it is not a developer signature or proof of safety. The release's build metadata records the exact source commit, architecture, signing status, and whether native installation was tested.
+Replace `<version>` with the release version. A matching hash verifies that the downloaded bytes match the release's checksum; it is not a developer signature or proof of safety. The release's build metadata records the exact source commit, architecture, signing status, bundled distribution-notice checksum, and whether native installation was tested.
 
 ## Install and start
 
@@ -44,14 +43,7 @@ On Ubuntu/Debian, open a terminal in the download directory and install the DEB:
 sudo apt install ./CloudCue_<version>_linux_amd64.deb
 ```
 
-For the AppImage, give the downloaded file executable permission, then launch it:
-
-```sh
-chmod +x CloudCue_<version>_linux_x86_64.AppImage
-./CloudCue_<version>_linux_x86_64.AppImage
-```
-
-If required system libraries or FUSE support are unavailable, use the DEB on a supported system or follow the [source build instructions](README.md#run-and-build). No Linux installation or desktop behavior is claimed from compilation alone.
+If required system libraries are unavailable, follow the [source build instructions](README.md#run-and-build) on a supported system. No Linux installation or desktop behavior is claimed from compilation alone.
 
 ## Your first study session
 

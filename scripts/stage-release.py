@@ -1,6 +1,7 @@
 """Inspect clean CI packages and stage explicit preview files and SHA-256 metadata."""
 import argparse
 import hashlib
+import io
 import json
 import os
 import pathlib
@@ -10,12 +11,13 @@ import shutil
 import struct
 import subprocess
 import sys
+import tarfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLATFORMS = {
     'macos-arm64': ('aarch64-apple-darwin', {'dmg': 'macos_arm64.dmg'}),
     'windows-x64': ('x86_64-pc-windows-msvc', {'nsis': 'windows_x64_setup.exe'}),
-    'linux-x64': ('x86_64-unknown-linux-gnu', {'deb': 'linux_amd64.deb', 'appimage': 'linux_x86_64.AppImage'}),
+    'linux-x64': ('x86_64-unknown-linux-gnu', {'deb': 'linux_amd64.deb'}),
 }
 UI_FILES = {'index.html', 'questions.js', 'private-bank.js', 'private-bank-example.json',
             'study-core.js', 'study.js', 'style.css'}
@@ -50,6 +52,38 @@ def authenticode_status(path):
                    "$cloudcue_signature.Status.ToString(); exit 0")
 
 
+def inspect_payload(kind, package, binary, notices):
+    expected = {'cloudcue': sha256(binary), 'DISTRIBUTION-NOTICES.txt': sha256(notices)}
+    if kind == 'dmg':
+        result = subprocess.check_output(['hdiutil', 'attach', '-readonly', '-nobrowse', '-plist', str(package)])
+        mounts = [entry['mount-point'] for entry in plistlib.loads(result)['system-entities'] if 'mount-point' in entry]
+        try:
+            require(len(mounts) == 1, 'Expected one disk-image volume.')
+            mount = pathlib.Path(mounts[0])
+            app = mount / 'CloudCue.app/Contents'
+            require(sha256(app / 'MacOS/cloudcue') == expected['cloudcue'], 'Disk-image executable mismatch.')
+            require(sha256(app / 'Resources/DISTRIBUTION-NOTICES.txt') == expected['DISTRIBUTION-NOTICES.txt'],
+                    'Disk-image distribution notices mismatch.')
+        finally:
+            for mount in mounts:
+                command('hdiutil', 'detach', mount)
+    elif kind == 'deb':
+        data = subprocess.check_output(['dpkg-deb', '--fsys-tarfile', str(package)])
+        with tarfile.open(fileobj=io.BytesIO(data), mode='r:') as archive:
+            for suffix, wanted in {'/usr/bin/cloudcue': expected['cloudcue'],
+                                   '/DISTRIBUTION-NOTICES.txt': expected['DISTRIBUTION-NOTICES.txt']}.items():
+                members = [entry for entry in archive.getmembers() if ('/' + entry.name.lstrip('./')).endswith(suffix)]
+                require(len(members) == 1 and members[0].isfile(), 'Expected one ordinary Debian payload file.')
+                require(hashlib.sha256(archive.extractfile(members[0]).read()).hexdigest() == wanted,
+                        'Debian payload mismatch.')
+    elif kind == 'nsis':
+        tool = shutil.which('7z') or 'C:/Program Files/7-Zip/7z.exe'
+        for name, wanted in {'cloudcue.exe': expected['cloudcue'],
+                             'DISTRIBUTION-NOTICES.txt': expected['DISTRIBUTION-NOTICES.txt']}.items():
+            data = subprocess.check_output([tool, 'x', '-so', '-bd', '-r', str(package), name], stderr=subprocess.PIPE)
+            require(hashlib.sha256(data).hexdigest() == wanted, 'Windows installer payload mismatch.')
+
+
 def stage(platform, prebuild=False):
     target, formats = PLATFORMS[platform]
     require(os.environ.get('GITHUB_ACTIONS') == 'true', 'Staging is restricted to GitHub Actions.')
@@ -72,9 +106,16 @@ def stage(platform, prebuild=False):
     require(config['build']['frontendDist'] == '../ui', 'Unexpected frontend source.')
     require(config['identifier'] == 'io.github.tigerrabbit.cloudcue', 'Unexpected app identity.')
     require(config['productName'] == 'CloudCue', 'Unexpected product name.')
+    require(config['bundle'].get('resources') == {'../DISTRIBUTION-NOTICES.txt': 'DISTRIBUTION-NOTICES.txt'},
+            'Unexpected package resources.')
+    notices = ROOT / 'DISTRIBUTION-NOTICES.txt'
+    require(notices.is_file() and not notices.is_symlink() and notices.stat().st_size > 1000,
+            'Distribution notices must be generated before packaging.')
     require({p.name for p in (ROOT / 'ui').iterdir()} == UI_FILES, 'Unexpected bundled UI files.')
     secret = re.compile(rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[opus]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|xox[baprs]-[A-Za-z0-9-]{25,}')
     private = re.compile(rb'(?i)(/Users/(?!runner/)[^\s/]+/|obsidian://|gdwobsidian|creditcleanup|echo\.exam-prep\.v1)')
+    require(not secret.search(notices.read_bytes()) and not private.search(notices.read_bytes()),
+            'Distribution notices failed the privacy check; do not publish them.')
     for path in (ROOT / 'ui').iterdir():
         require(path.is_file() and not path.is_symlink(), 'Bundled UI must contain ordinary files only.')
         require(not secret.search(path.read_bytes()) and not private.search(path.read_bytes()),
@@ -83,7 +124,8 @@ def stage(platform, prebuild=False):
     binary = release / ('cloudcue.exe' if platform == 'windows-x64' else 'cloudcue')
     metadata = {'platform': platform, 'target': target, 'version': version, 'sourceCommit': commit,
                 'rust': command('rustc', '--version'), 'nativeInstallTested': False,
-                'developerSignature': False, 'notarized': False, 'files': []}
+                'developerSignature': False, 'notarized': False,
+                'distributionNoticesSha256': sha256(notices), 'files': []}
     if platform == 'macos-arm64':
         app = release / 'bundle/macos/CloudCue.app'
         binary = app / 'Contents/MacOS/cloudcue'
@@ -119,7 +161,7 @@ def stage(platform, prebuild=False):
     require(not output.exists(), 'Use a fresh staging directory.')
     output.mkdir(parents=True)
     for kind, suffix in formats.items():
-        extension = {'dmg': '*.dmg', 'nsis': '*.exe', 'deb': '*.deb', 'appimage': '*.AppImage'}[kind]
+        extension = {'dmg': '*.dmg', 'nsis': '*.exe', 'deb': '*.deb'}[kind]
         matches = list((release / 'bundle' / kind).glob(extension))
         require(len(matches) == 1 and matches[0].is_file() and not matches[0].is_symlink(),
                 'Expected one ordinary package per format.')
@@ -134,10 +176,15 @@ def stage(platform, prebuild=False):
         elif kind == 'nsis':
             require(authenticode_status(source) == 'NotSigned',
                     'Expected unsigned preview installer.')
+        inspect_payload(kind, source, binary, notices)
         destination = output / f'CloudCue_{version}_{suffix}'
         shutil.copyfile(source, destination)
         metadata['files'].append({'name': destination.name, 'bytes': destination.stat().st_size,
                                   'sha256': sha256(destination)})
+    notice_copy = output / f'CloudCue_{version}_{platform.replace("-", "_")}_NOTICES.txt'
+    shutil.copyfile(notices, notice_copy)
+    metadata['files'].append({'name': notice_copy.name, 'bytes': notice_copy.stat().st_size,
+                              'sha256': sha256(notice_copy)})
     (output / 'BUILD-INFO.json').write_text(json.dumps(metadata, indent=2) + '\n')
     (output / 'SHA256SUMS.txt').write_text(''.join(f"{item['sha256']}  {item['name']}\n" for item in metadata['files']))
     print(json.dumps(metadata, indent=2))
