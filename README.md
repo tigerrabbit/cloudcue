@@ -8,7 +8,7 @@ Choose the **Curated** bank for the included questions or import a **Private** J
 
 ## Download
 
-Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: Windows packages are unsigned, Linux retains a documented dependency advisory, and macOS downloads are held in draft pending a signing decision. Read each release's build and installation status before downloading.
+Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: macOS uses an ad-hoc signature without Developer ID signing or notarization, Windows packages are unsigned, and Linux retains a documented dependency advisory. Read each release's build and installation status before downloading.
 
 ## Start studying
 

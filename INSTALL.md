@@ -6,7 +6,7 @@ CloudCue is an early preview. Packaging checks and native installation checks ar
 
 | System | Download | Status and requirements |
 | --- | --- | --- |
-| macOS, Apple Silicon | `CloudCue_<version>_macos_arm64.dmg` | macOS distribution is held in draft pending a signing decision. An ad-hoc signature is not Apple Developer ID signing or notarization. No Intel Mac package is offered. |
+| macOS, Apple Silicon | `CloudCue_<version>_macos_arm64.dmg` | Early preview with an ad-hoc signature, without Apple Developer ID signing or notarization. macOS may warn or block it. No Intel Mac package is offered. |
 | Windows, x64 | `CloudCue_<version>_windows_x64_setup.exe` | Preview installer without an Authenticode publisher signature. Windows may display an unknown-publisher or SmartScreen warning. Native installation has not been manually verified. |
 | Ubuntu/Debian, x64 | `CloudCue_<version>_linux_amd64.deb` | Requires WebKitGTK 4.1 and package dependencies. Built on Ubuntu 22.04; compatibility with other distributions is not established. Read the [known GLib advisory](SECURITY.md#known-dependency-advisory). |
 
@@ -33,7 +33,7 @@ Replace `<version>` with the release version. A matching hash verifies that the 
 
 ## Install and start
 
-For a published macOS DMG, open it and drag **CloudCue** to **Applications**, then open CloudCue from Applications. The current draft has no Developer ID signature or notarization; it is not ready for a normal macOS installation experience.
+Open the macOS DMG and drag **CloudCue** to **Applications**, then open CloudCue from Applications. This preview has an ad-hoc signature without Developer ID signing or notarization. If macOS blocks or warns about it, stop and review the release's publisher status before deciding whether to proceed.
 
 On Windows, open the downloaded setup program and follow its installation prompts. WebView2 is needed; the installer may download Microsoft's runtime if it is absent. If Windows blocks or warns about this unsigned preview, stop and review the release's publisher status before deciding whether to proceed. This guide does not change operating-system security settings.
 
