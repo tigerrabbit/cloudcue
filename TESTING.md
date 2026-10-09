@@ -30,3 +30,39 @@ The Apple Silicon macOS build was launched as a Tauri app. Manual native checks 
 Windows and Linux hosted builds have passed compilation and packaging checks; their native installation and desktop behavior remain unvalidated. Linux/BSD uses a [reviewed GLib safety backport](SECURITY.md#known-dependency-advisory), verified by optimized iterator regressions. iOS and Android builds have not been validated. No developer signing, notarization, automatic updates, official exam simulation, or readiness score is covered by these checks.
 
 For a pull request, record the operating system and architecture, commands and flows actually run, any limitations, and screenshots for visible UI changes. Use synthetic test questions and disposable local progress; exclude personal study records and private exports from evidence.
+
+## Workflow tests and coverage
+
+Install pinned dev dependencies with `npm ci`, then `npx playwright install chromium`.
+`npm run test:e2e` exercises five complete workflows at 940×800 and the configured
+minimum window of 360×380. A loopback server serves the unchanged bundled UI with
+its production CSP. The Browser plugin is not available in the development session;
+regular Playwright is used for repeatable automation. These renderer tests are
+separate from native desktop tests; they do not claim to test Rust startup.
+
+The workflows cover answer locking, feedback timing, pause/reload/resume, scoring
+once, retrying misses, reset confirmation, synthetic private-bank import/replacement,
+curated/private isolation, export preview plus separate download/copy, removal,
+invalid files, quota failure, literal markup, offline study and keyboard controls.
+Only `ui/private-bank-example.json` and synthetic variations are used.
+
+`npm run test:coverage` measures unit tests across **all three authored UI modules**,
+including the DOM controller, with unexecuted files included. `npm run coverage:e2e`
+reports Chromium V8 coverage from the workflow tests. HTML reports and JSON summaries
+live under ignored `.local/coverage/`; generated bank data, dependencies and test code
+are excluded. Unit-only and browser-only results are separate; line coverage is not
+proof of accessibility, security or complete branch coverage. CI retains reports and
+failure traces as artifacts for 14 days. Run a fresh workflow suite for current evidence.
+
+On Linux, install `webkit2gtk-driver`, `xvfb`, `xauth`, `dbus-x11` and
+`cargo install tauri-driver --version 2.1.0 --locked`. Build the native release with
+its target-specific notices, then `npm run test:e2e:native`. These tests drive the
+actual Tauri/WebKit executable, including process close/reopen and the minimum window.
+A disposable XDG profile isolates all test progress. No native test plugin, invoke
+mock, CSP change or WebKit sandbox override is added. macOS native automation remains
+manual because the upstream external driver supports Linux/Windows.
+
+For Python coverage, create an ignored venv and install `coverage==7.10.7`:
+`COVERAGE_FILE=.local/coverage/python.data python -m coverage run --branch --source=scripts -m unittest discover -s tests -p 'test_notices*.py'`.
+`python -m coverage report --data-file=.local/coverage/python.data` includes untested
+build/staging scripts. Notice-helper tests do not cover native package installation.

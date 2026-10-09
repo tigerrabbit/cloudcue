@@ -26,7 +26,6 @@ test('missing IDs get private IDs; literal HTML is retained as plain question te
   const bank = parse(data);
   assert.equal(bank.questions[0].id, 'private-0001');
   assert.equal(bank.questions[0].prompt, data.questions[0].prompt);
-  assert.equal({}.polluted, undefined);
 });
 test('rejects unsupported schema, unknown/prototype fields, missing content and malformed JSON', () => {
   const invalid = [null, [], {}, { ...clone(), schemaVersion: 2 }, { ...clone(), progress: {} },

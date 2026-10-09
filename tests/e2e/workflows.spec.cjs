@@ -1,0 +1,190 @@
+const { test, expect } = require('@playwright/test');
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const sample = require('../../ui/private-bank-example.json');
+const KEY = 'cloudcue.ccsp.v1';
+// Each test has fresh app-local storage. Only this synthetic redistributable fixture is imported.
+async function importBank(page, data = sample) {
+  await page.locator('#bank-kind').selectOption('private');
+  await page.locator('#private-bank-file').setInputFiles({ name: 'synthetic.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(data)) });
+  await expect(page.locator('#import-bank-dialog')).toBeVisible();
+  await page.locator('#import-bank-confirm').click();
+  await expect(page.locator('#import-bank-dialog')).toBeHidden();
+}
+async function choose(page, correct = true) {
+  const id = (await page.locator('#question-tag').textContent()).split(' · ')[0];
+  const answer = await page.evaluate(id => window.STUDY_BANK.questions.find(q => q.id === id)?.correct, id);
+  const value = correct ? answer : (answer + 1) % 4;
+  await page.locator(`input[name="study-answer"][value="${value}"]`).check();
+}
+test.beforeEach(async ({ page }) => {
+  page.errors = []; page.outbound = [];
+  page.on('pageerror', error => page.errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') page.errors.push(message.text()); });
+  await page.route('**/*', route => {
+    if (new URL(route.request().url()).origin === 'http://127.0.0.1:4173') return route.continue();
+    page.outbound.push(route.request().url()); return route.abort();
+  });
+  await page.coverage.startJSCoverage({ resetOnNavigation: false });
+});
+test.afterEach(async ({ page }, info) => {
+  const result = (await page.coverage.stopJSCoverage()).filter(entry => /\/(study-core|study|private-bank)\.js$/.test(entry.url))
+    .map(entry => ({ ...entry, url: path.resolve('ui', new URL(entry.url).pathname.slice(1)) }));
+  fs.mkdirSync('.local/coverage/browser-v8', { recursive: true });
+  fs.writeFileSync(`.local/coverage/browser-v8/${crypto.randomUUID()}.json`, JSON.stringify({ result }));
+  if (info.status === info.expectedStatus) {
+    expect(page.errors).toEqual([]);
+    expect(page.outbound).toEqual([]);
+  }
+});
+test('practice locks answers, resumes after reload, scores once and retries only misses', async ({ page, context }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle('CloudCue · CCSP practice');
+  await expect(page.locator('#bank-count')).toHaveText('60');
+  await page.locator('#start-study').click();
+  await expect(page.locator('#submit-answer')).toBeDisabled();
+  await expect(page.locator('#answer-feedback')).toBeHidden();
+  await choose(page);
+  await page.locator('#submit-answer').click();
+  await expect(page.locator('#answer-feedback')).toContainText('Correct');
+  await expect(page.locator('#question-options input:disabled')).toHaveCount(4);
+  await page.locator('#next-question').click();
+  await choose(page, false);
+  const prompt = await page.locator('#question-prompt').textContent();
+  const selection = await page.locator('input[name="study-answer"]:checked').getAttribute('value');
+  await page.locator('#pause-study').click();
+  await page.reload();
+  await page.locator('#start-study').click();
+  await expect(page.locator('#replace-dialog')).toBeVisible();
+  await page.locator('#replace-cancel').click();
+  await page.locator('#resume-study').click();
+  await expect(page.locator('#question-prompt')).toHaveText(prompt);
+  await expect(page.locator('input[name="study-answer"]:checked')).toHaveValue(selection);
+  await context.setOffline(true); // Real study continues without a connection.
+  await page.locator('#submit-answer').click();
+  await page.locator('#previous-question').click();
+  await expect(page.locator('#answer-feedback')).toContainText('Correct');
+  await page.locator('#next-question').click();
+  await page.locator('#finish-early').click();
+  await page.locator('#finish-cancel').click();
+  await expect(page.locator('#study-session')).toBeVisible();
+  await page.locator('#finish-early').click();
+  await page.locator('#finish-confirm').click();
+  await expect(page.locator('#result-score')).toHaveText('1 / 10');
+  await expect(page.locator('#result-detail')).toContainText('1 incorrect · 8 unanswered');
+  await page.locator('#review-missed-only').check();
+  await expect(page.locator('.review-card')).toHaveCount(9);
+  await page.locator('#back-to-setup').click();
+  await expect(page.locator('#seen-count')).toHaveText('2');
+  await page.locator('#last-result').click();
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).progress.history.length, KEY)).toBe(1);
+  await page.locator('#retry-missed').click();
+  await expect(page.locator('#question-position')).toHaveText('Question 1 of 9');
+});
+test('self-test hides feedback through submission and reset requires confirmation', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#study-mode').selectOption('selftest');
+  await page.locator('#start-study').click();
+  await choose(page);
+  await page.locator('#submit-answer').click();
+  await expect(page.locator('#answer-feedback')).toBeHidden();
+  await expect(page.locator('.correct-option')).toHaveCount(0);
+  await page.locator('#finish-early').click();
+  await page.locator('#finish-confirm').click();
+  await expect(page.locator('#review-list')).toContainText('Answer:');
+  await page.locator('#back-to-setup').click();
+  await page.locator('#reset-progress').click();
+  await page.locator('#reset-cancel').click();
+  await expect(page.locator('#seen-count')).toHaveText('1');
+  await page.locator('#reset-progress').click();
+  await page.locator('#reset-confirm').click();
+  await page.reload();
+  await expect(page.locator('#seen-count')).toHaveText('0');
+  await expect(page.locator('#recent-sessions li')).toHaveCount(0);
+});
+test('private import renders literal markup, replacement is confirmed and export needs a separate action', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#start-study').click();
+  await choose(page);
+  await page.locator('#submit-answer').click();
+  await page.locator('#finish-early').click();
+  await page.locator('#finish-confirm').click();
+  await page.locator('#back-to-setup').click();
+  const curated = await page.evaluate(key => localStorage.getItem(key), KEY);
+  const data = structuredClone(sample);
+  data.questions[0].prompt = '<img src=x onerror="window.injected=true"> <script>window.injected=true</script>';
+  await importBank(page, data);
+  await page.locator('#start-study').click();
+  await expect(page.locator('#question-prompt')).toHaveText(data.questions[0].prompt);
+  await expect(page.locator('#question-prompt img, #question-prompt script')).toHaveCount(0);
+  expect(await page.evaluate(() => window.injected)).toBeUndefined();
+  await page.locator('input[name="study-answer"][value="0"]').check();
+  await page.locator('#submit-answer').click();
+  await page.locator('#next-question').click();
+  await page.locator('#back-to-setup').click();
+  const privateBefore = await page.evaluate(() => localStorage.getItem('cloudcue.private.v1'));
+  await page.locator('#private-bank-file').setInputFiles({ name: 'replacement.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(sample)) });
+  await page.locator('#import-bank-cancel').click();
+  expect(await page.evaluate(() => localStorage.getItem('cloudcue.private.v1'))).toBe(privateBefore);
+  await page.locator('#export-private-bank').click();
+  const exported = JSON.parse(await page.locator('#private-bank-export').inputValue());
+  expect(exported).toEqual(data);
+  expect(Object.keys(exported).sort()).toEqual(['questions', 'schemaVersion']);
+  await expect(page.locator('#export-bank-status')).toBeEmpty();
+  const download = page.waitForEvent('download');
+  await page.locator('#download-private-bank').click();
+  expect((await download).suggestedFilename()).toBe('cloudcue-private-questions.json');
+  await page.locator('#copy-private-bank').click();
+  await expect(page.locator('#export-bank-status')).toContainText(/JSON copied|Select the JSON/);
+  await page.locator('#export-bank-close').click();
+  await expect(page.locator('#private-bank-export')).toHaveValue('');
+  await importBank(page);
+  await expect(page.locator('#seen-count')).toHaveText('0');
+  await page.locator('#remove-private-bank').click();
+  await page.locator('#remove-bank-cancel').click();
+  await expect(page.locator('#bank-count')).toHaveText('1');
+  await page.locator('#remove-private-bank').click();
+  await page.locator('#remove-bank-confirm').click();
+  await expect(page.locator('#start-study')).toBeDisabled();
+  await page.locator('#bank-kind').selectOption('curated');
+  expect(await page.evaluate(key => localStorage.getItem(key), KEY)).toBe(curated);
+  await expect(page.locator('#seen-count')).toHaveText('1');
+});
+test('invalid import and storage failure preserve the existing bank; corrupt progress recovers', async ({ page }) => {
+  await page.goto('/');
+  await importBank(page);
+  const original = await page.evaluate(() => localStorage.getItem('cloudcue.private-bank.v1'));
+  await page.locator('#private-bank-file').setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{broken') });
+  await expect(page.locator('#private-bank-status')).toContainText('not valid JSON');
+  await page.locator('#private-bank-file').setInputFiles({ name: 'too-large.json', mimeType: 'application/json', buffer: Buffer.alloc(2 * 1024 * 1024 + 1, 32) });
+  await expect(page.locator('#private-bank-status')).toContainText('2 MiB');
+  await page.evaluate(() => { Storage.prototype.setItem = () => { throw new DOMException('Synthetic quota failure', 'QuotaExceededError'); }; });
+  await importBank(page);
+  await expect(page.locator('#private-bank-status')).toContainText('existing bank was kept');
+  expect(await page.evaluate(() => localStorage.getItem('cloudcue.private-bank.v1'))).toBe(original);
+  await expect(page.locator('#storage-note')).toBeVisible();
+  await page.reload();
+  await page.locator('#bank-kind').selectOption('curated');
+  await page.evaluate(key => localStorage.setItem(key, '{broken'), KEY);
+  await page.reload();
+  await expect(page.locator('#recovery-note')).toBeVisible();
+  await expect(page.locator('#start-study')).toBeEnabled();
+});
+test('minimum-size layouts keep controls usable with keyboard and no horizontal clipping', async ({ page }, info) => {
+  await page.goto('/');
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+  expect(await overflow()).toBe(false);
+  await page.locator('#start-study').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#question-prompt')).toBeFocused();
+  const radio = page.locator('input[name="study-answer"]').first();
+  await radio.focus(); await page.keyboard.press('Space');
+  await page.keyboard.press('Tab');
+  // The visible submit control is independently operable without a pointer.
+  await page.locator('#submit-answer').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#next-question')).toBeFocused();
+  await expect(page.locator('#answer-feedback')).toBeVisible();
+  expect(await overflow()).toBe(false);
+  await page.screenshot({ path: path.join(info.outputDir, 'practice.png'), fullPage: true });
+});
