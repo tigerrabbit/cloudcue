@@ -10,9 +10,10 @@
     "test:security": "./scripts/security.sh",
     "test:notices": "python3 -m unittest discover -s tests -p \"test_notices*.py\"",
     "test:coverage": "c8 --all --include ui/study-core.js --include ui/private-bank.js --include ui/study.js --reporter text --reporter html --reporter json-summary --reports-dir .local/coverage/unit node --test tests/*.test.cjs",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/test-e2e.cjs",
     "coverage:e2e": "c8 report --all --include ui/study-core.js --include ui/private-bank.js --include ui/study.js --temp-directory .local/coverage/browser-v8 --reports-dir .local/coverage/browser --reporter text --reporter html --reporter json-summary",
-    "test:e2e:native": "./scripts/test-native-e2e.sh"
+    "test:e2e:native": "./scripts/test-native-e2e.sh",
+    "coverage:combined": "node scripts/report-coverage.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

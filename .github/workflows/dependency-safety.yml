@@ -23,7 +23,7 @@ jobs:
       - name: Install Linux prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y libglib2.0-dev libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libglib2.0-dev libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf webkit2gtk-driver xvfb xauth dbus-x11
       - name: Prepare Rust
         run: |
           rustup toolchain install stable --profile minimal --component rustfmt --component clippy --component rust-docs
@@ -43,3 +43,14 @@ jobs:
           cargo test --locked --manifest-path src-tauri/Cargo.toml
           cargo clippy --locked --manifest-path src-tauri/Cargo.toml -- -D warnings
           cargo build --release --locked --manifest-path src-tauri/Cargo.toml --features custom-protocol
+
+      - name: Install upstream native test driver
+        run: cargo install tauri-driver --version 2.1.0 --locked
+      - run: npm run test:e2e:native
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: linux-native-evidence
+          path: .local/native-e2e
+          include-hidden-files: true
+          retention-days: 14

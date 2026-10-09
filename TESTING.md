@@ -48,7 +48,8 @@ Only `ui/private-bank-example.json` and synthetic variations are used.
 
 `npm run test:coverage` measures unit tests across **all three authored UI modules**,
 including the DOM controller, with unexecuted files included. `npm run coverage:e2e`
-reports Chromium V8 coverage from the workflow tests. HTML reports and JSON summaries
+reports Chromium V8 coverage from the workflow tests. `npm run coverage:combined`
+merges fresh unit and browser measurements. HTML reports and JSON summaries
 live under ignored `.local/coverage/`; generated bank data, dependencies and test code
 are excluded. Unit-only and browser-only results are separate; line coverage is not
 proof of accessibility, security or complete branch coverage. CI retains reports and
@@ -66,3 +67,37 @@ For Python coverage, create an ignored venv and install `coverage==7.10.7`:
 `COVERAGE_FILE=.local/coverage/python.data python -m coverage run --branch --source=scripts -m unittest discover -s tests -p 'test_notices*.py'`.
 `python -m coverage report --data-file=.local/coverage/python.data` includes untested
 build/staging scripts. Notice-helper tests do not cover native package installation.
+
+## Review snapshot — October 9, 2026
+
+| Measurement | Covered / total | Coverage |
+| --- | --- | --- |
+| All authored UI JS, unit only | 192 / 556 lines | 34.53% |
+| All authored UI JS, browser only | 526 / 556 lines | 94.60% |
+| All authored UI JS, unit + browser | 528 / 556 lines | 94.96% |
+| Unit + browser branches | 325 / 361 | 90.02% |
+| Python build/staging scripts, notice unit tests | 157 / 602 executable lines | 26.08% |
+
+Python's branch-inclusive result is 25.46%; `generate-distribution-notices.py` has
+35% branch-inclusive coverage, while bank generation and release staging have no
+unit coverage. Native startup has no Rust unit tests and no instrumented native-E2E
+coverage percentage. Do not treat a passing build or desktop test as a measured
+Rust coverage score.
+
+All authored app, build, packaging and test code was reviewed. Vendored GLib was
+checked against the complete recorded inventory and its narrow upstream safety
+patch; third-party internals were not exhaustively re-audited. The unrelated
+prototype-pollution assertion in the HTML parser test was removed; the new rendered
+import test exercises literal HTML without creating elements or executing script.
+Scoring, restoration, bank-integrity, import-boundary and notice tests retain value.
+
+The five workflow scenarios pass at both desktop and minimum sizes (ten executions).
+The two real native Tauri/WebKit tests also passed in the isolated OrbStack runner.
+Hosted public CI now runs the native tests on Linux for pushes and PRs, alongside existing macOS builds.
+All test banks are synthetic and all native progress is disposable. The production
+CSP and WebKit sandbox remain active.
+
+Remaining valuable E2E work is installation/upgrade/uninstall on supported OSes,
+Windows WebView2 execution, macOS manual keyboard/screen-reader interaction,
+storage-read/removal failure paths and staging of synthetic package fixtures.
+Coverage is a map of gaps, not proof that every covered condition is correct.
