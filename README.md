@@ -8,7 +8,7 @@ Choose the **Curated** bank for the included questions or import a **Private** J
 
 ## Download
 
-Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: macOS uses an ad-hoc signature without Developer ID signing or notarization, Windows packages are unsigned, and Linux retains a documented dependency advisory. Read each release's build and installation status before downloading.
+Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: macOS uses an ad-hoc signature without Developer ID signing or notarization, Windows packages are unsigned, and the Linux source now carries a reviewed GLib safety backport. Read each release's build and installation status before downloading. Linux downloads published before this source fix have not been rebuilt with it; use current source until a fixed release is published.
 
 ## Start studying
 
@@ -57,10 +57,13 @@ CloudCue is an independent project and is not affiliated with, endorsed by, or s
 
 Manual native behavior has been checked on macOS Apple Silicon. Hosted CI has also compiled Windows x64 and Linux x64 packages; their installation and desktop behavior have not been manually verified. Install Node.js 22 or later, Python 3.9 or later, a stable Rust toolchain with `rustfmt` and Clippy, and your [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/). The default build script produces a macOS app bundle.
 
+The optimized GLib regression also needs system GLib development files: `brew install glib pkgconf` on macOS, or `libglib2.0-dev` on Ubuntu. See [backport maintenance](vendor/README.md).
+
 ```sh
 npm ci
 npm test
 npm run check
+npm run test:security
 cargo fmt --manifest-path src-tauri/Cargo.toml --check
 python3 scripts/generate-distribution-notices.py --target aarch64-apple-darwin
 cargo test --manifest-path src-tauri/Cargo.toml --locked
@@ -79,7 +82,7 @@ Run `npm ci`, `npm test`, and `npm run check` on each development machine. Insta
 | --- | --- | --- |
 | macOS | Xcode command-line tools (`xcode-select --install`), Node 22+, stable Rust with rustfmt/Clippy. `npm run dev`; `npm run build`. | Apple Silicon native build and manual app checks passed; macOS CI builds the app. |
 | Windows | Microsoft C++ Build Tools with **Desktop development with C++**, WebView2, and an MSVC Rust toolchain. `npx tauri dev`; `npx tauri build --bundles nsis`. | Hosted x64 compilation and unsigned NSIS package checks passed; native installation and behavior remain untested. |
-| Debian/Ubuntu Linux | Tauri's WebKitGTK 4.1 development packages and compiler prerequisites. `npx tauri dev`; `npx tauri build --bundles deb`. | Hosted Ubuntu 22.04 x64 compilation and DEB metadata checks passed; native installation and behavior remain untested. Read the [known dependency advisory](SECURITY.md#known-dependency-advisory) first. |
+| Debian/Ubuntu Linux | Tauri's WebKitGTK 4.1 development packages and compiler prerequisites. `npx tauri dev`; `npx tauri build --bundles deb`. | Hosted Ubuntu 22.04 x64 compilation and DEB metadata checks passed; native installation and behavior remain untested. Read the [GLib backport details](SECURITY.md#known-dependency-advisory). |
 
 For Debian/Ubuntu, the current prerequisite list is `libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev`. Other distributions use different package names. These routes do not provide developer signing, notarization, or verified native installation. AppImage distribution is withheld while its additional bundled native-library obligations are resolved. iOS and Android are future exploration, with no supported mobile build today.
 

@@ -6,7 +6,9 @@
     "dev": "./scripts/tauri.sh dev",
     "build": "./scripts/tauri.sh build --bundles app",
     "test": "node --test tests/*.test.cjs",
-    "check": "node --check ui/questions.js && node --check ui/study-core.js && node --check ui/private-bank.js && node --check ui/study.js"
+    "check": "node --check ui/questions.js && node --check ui/study-core.js && node --check ui/private-bank.js && node --check ui/study.js",
+    "test:security": "./scripts/security.sh",
+    "test:notices": "python3 -m unittest discover -s tests -p \"test_notices*.py\""
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"

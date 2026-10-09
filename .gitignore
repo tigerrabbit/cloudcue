@@ -13,3 +13,9 @@ DISTRIBUTION-NOTICES.txt
 .env.*
 !.env.example
 *.log
+
+security-tests/target/
+vendor/**/target/
+vendor/**/Cargo.lock
+
+__pycache__/

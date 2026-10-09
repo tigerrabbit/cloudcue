@@ -170,7 +170,7 @@ def stage(platform, prebuild=False):
         require(header[:6] == b'\x7fELF\x02\x01' and struct.unpack_from('<H', header, 18)[0] == 62,
                 'Unexpected Linux binary architecture.')
         metadata['signature'] = 'unsigned'
-        metadata['knownAdvisory'] = 'GHSA-wrw7-89jp-8q8g / RUSTSEC-2024-0429 (glib 0.18.5)'
+        metadata['dependencyBackports'] = ['GHSA-wrw7-89jp-8q8g: reviewed GLib 0.18.5 pointer-safety backport']
     require(not private.search(binary.read_bytes()) and not secret.search(binary.read_bytes()),
             'Executable failed the privacy check; do not publish it.')
     output = ROOT / 'release-assets' / platform

@@ -1,2 +1,6 @@
 # Preserve the byte-identical upstream files referenced by pinned SHA-256 values.
 third-party/rust-license-fallbacks/** -text
+
+# Preserve the exact reviewed upstream/backport source bytes.
+vendor/glib-0.18.5/** -text
+vendor/glib-0.18.5/LICENSE whitespace=-blank-at-eof

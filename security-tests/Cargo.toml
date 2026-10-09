@@ -1,0 +1,17 @@
+[package]
+name = "cloudcue-dependency-regressions"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+glib = "=0.18.5"
+
+[patch.crates-io]
+glib = { path = "../vendor/glib-0.18.5" }
+
+# Both advisories manifest in optimized builds. Catching rejection must not
+# depend on Rust's debug overflow checks.
+[profile.release]
+opt-level = 3
+overflow-checks = false

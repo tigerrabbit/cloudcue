@@ -14,3 +14,7 @@ tauri = { version = "2", features = [] }
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
+
+# GTK 3 requires glib 0.18; use the reviewed upstream pointer-safety backport.
+[patch.crates-io]
+glib = { path = "../vendor/glib-0.18.5" }

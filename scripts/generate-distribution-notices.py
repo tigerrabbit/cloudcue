@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate target-specific binary notices from locked, unmodified Cargo sources.
+"""Generate target-specific binary notices from locked, reviewed Cargo sources.
 
 The output is a build resource, not a legal-clearance report. No downloads occur
 here: missing upstream texts need reviewed, version-pinned fallback inputs.
@@ -224,6 +224,54 @@ def fallback_inputs():
     return base, entries
 
 
+def local_backport_info(package):
+    """Admit only the reviewed GLib copy, with a complete ordinary-file inventory."""
+    base = ROOT / "vendor/glib-0.18.5"
+    if (package.get("source") is not None or package.get("name") != "glib"
+            or package.get("version") != "0.18.5" or package.get("license") != "MIT"
+            or base.is_symlink() or base.resolve() != base
+            or Path(package["manifest_path"]).resolve() != base / "Cargo.toml"):
+        raise NoticeError("Unsupported local dependency; expected reviewed GLib backport")
+    try:
+        provenance = json.loads(read_text(ROOT / "vendor/provenance.json", "backport provenance"))
+        record = provenance["glib-0.18.5"]
+        if record["archiveSha256"] != "233daaf6e83ae6a12a52055f568f9d7cf4671dabb78ff9560ab6da230ce00ee5":
+            raise NoticeError("GLib upstream archive checksum changed")
+        expected = record["files"]
+        actual = set()
+        for path in base.rglob("*"):
+            if path.is_symlink():
+                raise NoticeError("Symlink in GLib backport")
+            if path.is_file():
+                actual.add(path.relative_to(base).as_posix())
+        if actual != set(expected):
+            raise NoticeError("GLib backport file inventory changed")
+        for relative, hashes in expected.items():
+            path = Path(relative)
+            if path.is_absolute() or ".." in path.parts:
+                raise NoticeError("Invalid GLib backport provenance path")
+            digest = hashlib.sha256((base / path).read_bytes()).hexdigest()
+            if digest != hashes["patched"]:
+                raise NoticeError(f"GLib backport checksum mismatch: {relative}")
+    except (OSError, KeyError, TypeError) as exc:
+        raise NoticeError("Missing or invalid GLib backport provenance") from exc
+    return record
+
+
+def backport_source_reference():
+    # Binary notices need an exact published source route, not a mutable branch.
+    # Ordinary application edits may be uncommitted; the vendored source may not.
+    run(["git", "diff", "--exit-code", "HEAD", "--", "vendor"], "Committed backport source check")
+    revision = run(["git", "rev-parse", "HEAD"], "Backport source revision").strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise NoticeError("Invalid backport source revision")
+    run(["git", "cat-file", "-e", f"{revision}:vendor/glib-0.18.5/src/variant_iter.rs"],
+        "Published backport source check")
+    if run(["git", "ls-files", "--others", "--exclude-standard", "--", "vendor"],
+           "Tracked backport source check").strip():
+        raise NoticeError("Commit all backport source before generating binary notices")
+    return f"https://github.com/tigerrabbit/cloudcue/tree/{revision}/vendor/glib-0.18.5"
+
 def package_notices(package, fallback_base, fallbacks):
     name, version = package["name"], package["version"]
     label = f"{name} {version}"
@@ -440,21 +488,27 @@ def generate(args):
              "Registry packages are used unmodified. For each package, the source",
              "archive URL below retrieves the exact original source, including covered",
              "MPL-2.0 source where applicable, at no charge; its SHA-256 is recorded.",
+             "Reviewed local backports are explicitly identified with their patched source.",
              "Those source files retain their upstream terms. License alternatives",
              "remain as declared upstream; combined AND requirements are retained.", "",
              "Project license", "-" * 72, read_text(ROOT / "LICENSE", "project LICENSE").rstrip(), "",
              f"Resolved Cargo dependencies: {len(packages)}", ""]
     for package in packages:
         name, version = package["name"], package["version"]
-        if package.get("source") != REGISTRY:
-            raise NoticeError(f"Unsupported non-crates.io dependency: {name} {version}")
-        if (name, version) not in checksums:
+        backport = local_backport_info(package) if package.get("source") != REGISTRY else None
+        if backport is None and (name, version) not in checksums:
             raise NoticeError(f"Dependency is absent from locked registry checksums: {name} {version}")
         texts, note = package_notices(package, fallback_base, fallbacks)
         encoded_name, encoded_version = quote(name, safe=""), quote(version, safe="")
         lines.extend(["=" * 72, f"Package: {name} {version}", f"SPDX license declaration: {package['license']}",
                       f"Source archive: https://static.crates.io/crates/{encoded_name}/{encoded_name}-{encoded_version}.crate",
-                      f"Source archive SHA-256: {checksums[(name, version)]}"])
+                      f"Source archive SHA-256: {backport['archiveSha256'] if backport else checksums[(name, version)]}"])
+        if backport:
+            lines.extend(["This archive identifies the original upstream crate; the local copy has a safety backport.",
+                          f"Patched source: {backport_source_reference()}",
+                          "Fix: https://github.com/gtk-rs/gtk-rs-core/commit/b5a4071e439bef2b5eea76c3aa25e5ae84839e34",
+                          "Advisory: https://rustsec.org/advisories/RUSTSEC-2024-0429.html",
+                          f"Patched variant_iter.rs SHA-256: {backport['files']['src/variant_iter.rs']['patched']}"])
         if note:
             lines.append(f"Notice provenance: {note}")
         lines.append("")

@@ -39,7 +39,7 @@ jobs:
           cache: npm
       - name: Prepare Rust
         run: |
-          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+          rustup toolchain install stable --profile minimal --component rustfmt --component clippy --component rust-docs
           rustup default stable
       - run: npm ci
       - run: cargo fmt --manifest-path src-tauri/Cargo.toml --check
