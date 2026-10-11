@@ -42,6 +42,7 @@ test('practice locks answers, resumes after reload, scores once and retries only
   await page.goto('/');
   await expect(page).toHaveTitle('CloudCue · CCSP practice');
   await expect(page.locator('#bank-count')).toHaveText('60');
+  await expect(page.locator('#resume-banner')).toBeHidden();
   await page.locator('#start-study').click();
   await expect(page.locator('#submit-answer')).toBeDisabled();
   await expect(page.locator('#answer-feedback')).toBeHidden();
@@ -55,6 +56,14 @@ test('practice locks answers, resumes after reload, scores once and retries only
   const selection = await page.locator('input[name="study-answer"]:checked').getAttribute('value');
   await page.locator('#pause-study').click();
   await page.reload();
+  await expect(page.locator('#resume-study')).toBeInViewport({ ratio: 1 });
+  expect(await page.locator('#study-home > :first-child').getAttribute('id')).toBe('resume-banner');
+  await page.screenshot({ path: `/tmp/cloudcue-resume-${page.viewportSize().width}.png` });
+  await page.locator('#resume-study').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#question-prompt')).toHaveText(prompt);
+  await expect(page.locator('input[name="study-answer"]:checked')).toHaveValue(selection);
+  await page.locator('#pause-study').click();
   await page.locator('#start-study').click();
   await expect(page.locator('#replace-dialog')).toBeVisible();
   await page.locator('#replace-cancel').click();

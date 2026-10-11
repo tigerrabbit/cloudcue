@@ -2,6 +2,7 @@
 from pathlib import Path
 import json
 import random
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sources = json.loads((ROOT / 'data/sources.json').read_text())
@@ -24,5 +25,14 @@ used = {q['source'] for q in questions}
 bank = dict(version=1, updated='2026-10-04',
             sources={key: value for key, value in sources.items() if key in used},
             questions=questions)
-(ROOT / 'ui/questions.js').write_text('window.STUDY_BANK = ' + json.dumps(bank, ensure_ascii=False, indent=2) + ';\n')
+assets = {
+    'ui/questions.js': 'window.STUDY_BANK = ' + json.dumps(bank, ensure_ascii=False, indent=2) + ';\n',
+    'shared/questions.json': json.dumps(bank, ensure_ascii=False, indent=2) + '\n',
+}
+for name, content in assets.items():
+    if '--check' in sys.argv:
+        if (ROOT / name).read_text() != content:
+            raise ValueError(f'Stale generated bank: {name}')
+    else:
+        (ROOT / name).write_text(content)
 print(f'Generated {len(questions)} questions and {len(used)} source references.')

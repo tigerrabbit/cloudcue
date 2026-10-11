@@ -116,3 +116,11 @@ Built with Rust and Tauri, with development assistance from OpenAI Codex and Cha
 Project-authored code, questions, explanations, and icon are offered under the [MIT license](LICENSE), copyright Gregory Wendel, 2026. Authorized third-party additions must preserve their applicable license, attribution, and notices. Dependency and reference-content rights remain separate; see [third-party notices](THIRD_PARTY_NOTICES.md). AI-assisted authorship and citations do not guarantee clearance of every possible third-party claim.
 
 See [contributing](CONTRIBUTING.md) and [security](SECURITY.md) for maintenance and reporting guidance.
+
+## Shared source
+
+The study engine, web styles, curated bank and reusable behavior tests live in
+[shared/](shared/README.md). Downstream apps can pin this public repository and
+consume those assets while keeping their own interfaces, integrations and
+user storage separate. Run `npm run build:shared` after shared code/style edits;
+`npm run check:shared` checks both bundled assets and deterministic question data.

@@ -101,3 +101,17 @@ Remaining valuable E2E work is installation/upgrade/uninstall on supported OSes,
 Windows WebView2 execution, macOS manual keyboard/screen-reader interaction,
 storage-read/removal failure paths and staging of synthetic package fixtures.
 Coverage is a map of gaps, not proof that every covered condition is correct.
+
+## Shared-source and resume-first verification — October 11, 2026
+
+The shared engine and stylesheet now have one authored copy under `shared/`;
+bundled copies are checked byte-for-byte. The generated public JSON bank is
+checked against its authoring rows. Common behavior tests are reusable by
+downstream consumers. Question IDs, options, answers and bank version are unchanged.
+
+Passed locally: 21 study/import/contract tests, 8 notice tests, the optimized
+GLib regression, Rust formatting/test/clippy, and the macOS release build.
+All 10 browser cases passed at 940×800 and 360×380, including a fully visible
+resume button after reload, keyboard resume and preserved question/selection.
+Desktop and narrow screenshots were inspected; app console checks passed.
+Combined UI line coverage remains 94.96% (528/556); branch coverage is 89.72%.

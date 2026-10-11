@@ -4,7 +4,8 @@ CloudCue is a CCSP foundation-practice app using Tauri 2 with static HTML/CSS/Ja
 
 ## Layout and checks
 
-- `ui/study-core.js`: selection, shuffle, scoring, and saved-state validation.
+- `shared/study-core.js` (bundled into `ui/study-core.js`): selection, shuffle, scoring, and saved-state validation.
+- `shared/study.css`: common web styles; `npm run build:shared` refreshes bundled copies.
 - `ui/study.js`: DOM interactions and app-local progress.
 - `data/ccsp.psv`, `data/sources.json`: authoring source; regenerate with `python3 scripts/build-bank.py`.
 - `ui/private-bank-example.json`: synthetic schema-version-1 example; never replace it with personal or restricted study content.

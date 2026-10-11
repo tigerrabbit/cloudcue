@@ -19,6 +19,10 @@
         <p id="storage-note" class="notice" role="status" hidden>Local storage is unavailable. This session works, but progress may not survive closing the app.</p>
         <p id="recovery-note" class="notice" role="status" hidden>An unreadable saved session was ignored. Valid saved progress was kept where possible.</p>
         <div id="study-home">
+          <div id="resume-banner" class="resume-banner" role="region" aria-label="Paused session" hidden>
+            <div><strong>You have a paused session</strong><p id="resume-description" class="hint"></p></div>
+            <button id="resume-study" type="button">Resume session</button>
+          </div>
           <p class="eyebrow">ONE QUESTION AT A TIME</p>
           <h1>Prepare with purpose.</h1>
           <p class="intro">Practice the concepts, understand your mistakes, and build confidence.</p>
@@ -47,10 +51,6 @@
             <div><strong id="missed-count">0</strong><span>To revisit</span></div>
           </div>
           <p class="hint">Progress updates after a completed session. Accuracy uses your latest submitted answer to each attempted question.</p>
-          <div id="resume-banner" class="resume-banner" hidden>
-            <div><strong>You have a paused session</strong><p id="resume-description" class="hint"></p></div>
-            <button id="resume-study" type="button">Resume session</button>
-          </div>
           <section class="setup-card" aria-labelledby="setup-title">
             <h2 id="setup-title">Make this session yours</h2>
             <div class="setup-grid">
