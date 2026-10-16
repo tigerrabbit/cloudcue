@@ -48,6 +48,24 @@ jobs:
       - run: cargo test --manifest-path src-tauri/Cargo.toml --locked
       - run: cargo clippy --manifest-path src-tauri/Cargo.toml --locked -- -D warnings
       - run: npm run build
+      - run: npm run build:private
+      - name: Verify private local app signature
+        run: codesign --verify --deep --strict 'src-tauri/target/release/bundle/macos/CloudCue Private.app'
+      - name: Verify separate app identities and shared notices
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import plistlib
+          root = Path('src-tauri/target/release/bundle/macos')
+          for name, identifier in (
+              ('CloudCue', 'io.github.tigerrabbit.cloudcue'),
+              ('CloudCue Private', 'io.github.tigerrabbit.cloudcue.private'),
+          ):
+              contents = root / f'{name}.app' / 'Contents'
+              info = plistlib.loads((contents / 'Info.plist').read_bytes())
+              assert info['CFBundleIdentifier'] == identifier
+              assert (contents / 'Resources/DISTRIBUTION-NOTICES.txt').is_file()
+          PY
 
   browser-workflows:
     runs-on: ubuntu-24.04

@@ -6,6 +6,11 @@ CloudCue includes **60 AI-assisted, original practice questions**, with ten in e
 
 Choose the **Curated** bank for the included questions or import a **Private** JSON bank for local study. The two banks have separate questions, saved sessions, and scores. Private imports do not submit content to the shared bank.
 
+CloudCue is the single maintained CCSP application source. The earlier Echo
+Tauri/GPUI application is archived for reference. Both the standard app and the
+separate **CloudCue Private** build come from this repository; no private source
+repository or submodule is required. See [private builds](PRIVATE-BUILD.md).
+
 ## Download
 
 Find published downloads on [CloudCue Releases](https://github.com/tigerrabbit/cloudcue/releases). Follow the [installation guide](INSTALL.md) to choose your platform, verify the checksum, install, and start studying. These are early previews: macOS uses an ad-hoc signature without Developer ID signing or notarization, Windows packages are unsigned, and the Linux source now carries a reviewed GLib safety backport. Read each release's build and installation status before downloading. Linux downloads published before this source fix have not been rebuilt with it; use current source until a fixed release is published.

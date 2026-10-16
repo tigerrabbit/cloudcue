@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "./scripts/tauri.sh dev",
     "build": "./scripts/tauri.sh build --bundles app",
+    "dev:private": "./scripts/tauri.sh dev --config src-tauri/tauri.private.conf.json",
+    "build:private": "./scripts/tauri.sh build --config src-tauri/tauri.private.conf.json --bundles app -- --locked",
     "test": "node --test tests/*.test.cjs",
     "check": "npm run check:shared && node --check ui/questions.js && node --check ui/study-core.js && node --check ui/private-bank.js && node --check ui/study.js",
     "test:security": "./scripts/security.sh",
