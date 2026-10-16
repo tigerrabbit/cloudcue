@@ -2,6 +2,11 @@
 
 CloudCue is a CCSP foundation-practice app using Tauri 2 with static HTML/CSS/JavaScript. Read README.md for the study limitations and build prerequisites.
 
+This is the sole maintained CCSP app source. `npm run build:private` uses the
+same code with a separate Tauri app identifier; see PRIVATE-BUILD.md. Keep private
+banks and progress outside Git and bundles. Do not restore the archived Echo/GPUI
+implementation or its private integrations into this public repository.
+
 ## Layout and checks
 
 - `shared/study-core.js` (bundled into `ui/study-core.js`): selection, shuffle, scoring, and saved-state validation.
